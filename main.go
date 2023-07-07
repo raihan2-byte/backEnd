@@ -28,14 +28,14 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	dbUsername := os.Getenv("root")
-	// dbPassword := os.Getenv("DB_PASSWORD")
-	dbHost := os.Getenv("127.0.0.1")
-	dbPort := os.Getenv("3306")
-	dbName := os.Getenv("blog-posts")
+	dbUsername := os.Getenv("DB_USERNAME")
+	dbPassword := os.Getenv("DB_PASSWORD")
+	dbHost := os.Getenv("DB_HOST")
+	dbPort := os.Getenv("DB_PORT")
+	dbName := os.Getenv("DB_NAME")
 	secretKey := os.Getenv("SECRET_KEY")
 
-	dsn := dbUsername + "root:" + "@tcp(" + dbHost + "127.0.0.1:" + dbPort + "3306)/" + dbName + "blog-posts?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := dbUsername + ":" + dbPassword + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("DB Connection Error")
