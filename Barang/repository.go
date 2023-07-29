@@ -6,6 +6,7 @@ type Repository interface {
 	Save(barang Barang) (Barang, error)
 	FindById(ID int) (Barang, error)
 	FindAll() ([]Barang, error)
+	FindByCategory(category int) ([]Barang, error)
 	Update(barang Barang) (Barang, error)
 	Delete(barang Barang) (Barang, error)
 }
@@ -30,7 +31,7 @@ func (r *repository) Save(barang Barang) (Barang, error) {
 func (r *repository) FindAll() ([]Barang, error){
 	var barang []Barang
 
-	err := r.db.Find(&barang).Error
+	err := r.db.Preload("CategoryData").Find(&barang).Error
 
 	if err != nil {
 		return barang, err
@@ -42,13 +43,25 @@ func (r *repository) FindAll() ([]Barang, error){
 func (r *repository) FindById(ID int) (Barang, error) {
 	var barang Barang
 
-	err := r.db.Where("id = ?", ID).Find(&barang).Error
+	err := r.db.Preload("CategoryData").Where("id = ?", ID).First(&barang).Error
 
 	if err != nil {
 		return barang, err
 	}
 	return barang, nil
 }
+
+func (r repository) FindByCategory(category int) ([]Barang, error){
+	var barang []Barang
+
+	err := r.db.Where("category_id = ?", category).Find(&barang).Error
+	if err != nil {
+		return barang, err
+	}
+	
+	return barang, nil
+}
+
 
 func (r *repository) Update(barang Barang) (Barang, error) {
 	err := r.db.Save(&barang).Error

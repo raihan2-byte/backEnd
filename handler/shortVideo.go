@@ -1,8 +1,8 @@
 package handler
 
 import (
-	barang "blog/Barang"
 	"blog/helper"
+	"blog/shortvideo"
 	"blog/user"
 	"fmt"
 	"net/http"
@@ -11,16 +11,16 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type barangHandler struct {
-	barangService barang.Service
+type shortVideoHandler struct {
+	shortVideoService shortvideo.Service
 }
 
-func NewBarangHandler(barangService barang.Service) *barangHandler {
-	return &barangHandler{barangService}
+func NewShortVideoHandler(shortVideoService shortvideo.Service) *shortVideoHandler {
+	return &shortVideoHandler{shortVideoService}
 }
 
-func (h *barangHandler) CreateBarang (c *gin.Context){
-	var input barang.InputBarang
+func (h *shortVideoHandler) CreateShortVideo(c *gin.Context) {
+	var input shortvideo.InputShortVideo
 
 	err := c.ShouldBind(&input)
 	if err != nil {
@@ -56,7 +56,7 @@ func (h *barangHandler) CreateBarang (c *gin.Context){
 		return
 	}
 
-	_, err = h.barangService.CreateBarang(input, path)
+	_, err = h.shortVideoService.CreateShortVideo(input, path)
 	if err != nil {
 		data := gin.H{"is_uploaded": false}
 		response := helper.APIresponse(http.StatusUnprocessableEntity, data)
@@ -68,23 +68,22 @@ func (h *barangHandler) CreateBarang (c *gin.Context){
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *barangHandler) GetAllBarang (c *gin.Context){
+func (h *shortVideoHandler) GetAllShortVideo(c *gin.Context) {
 	input, _ := strconv.Atoi(c.Query("id"))
 
-	data, err := h.barangService.GetAllBarang(input)
+	newBerita, err := h.shortVideoService.GetAllShortVideo(input)
 	if err != nil {
-		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
+		response := helper.APIresponse(http.StatusUnprocessableEntity, "Eror")
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
-	response := helper.APIresponse(http.StatusOK, barang.FormatterGetCategory(data))
+	response := helper.APIresponse(http.StatusOK, newBerita)
 	c.JSON(http.StatusOK, response)
+
 }
 
-func (h *barangHandler) GetOneBarang (c *gin.Context){
-	var input barang.GetBarang
+func (h *shortVideoHandler) GetOneShortVideo(c *gin.Context) {
+	var input shortvideo.GetShortVideoID
 
 	err := c.ShouldBindUri(&input)
 	if err != nil {
@@ -95,45 +94,21 @@ func (h *barangHandler) GetOneBarang (c *gin.Context){
 		return
 	}
 
-	data, err := h.barangService.GetOneBarang(input.ID)
+	newDel, err := h.shortVideoService.GetOneShortVideo(input.ID)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
 		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
+
 	}
-	response := helper.APIresponse(http.StatusOK, barang.FormatterBarang(data))
+	response := helper.APIresponse(http.StatusOK, newDel)
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *barangHandler) GetCategoryBarang (c *gin.Context){
-	var input barang.GetCategory
-
-	err := c.ShouldBindUri(&input)
-	if err != nil {
-		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-	}
-	// input, _ := strconv.Atoi(c.Query("id"))
-
-	data, err := h.barangService.GetBarangByCategory(input.Category)
-	if err != nil {
-		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-	}
-	response := helper.APIresponse(http.StatusOK, barang.FormatterGetCategory(data))
-	c.JSON(http.StatusOK, response)
-}
-
-func (h *barangHandler) DeleteBarang (c *gin.Context){
-	var input barang.GetBarang
+func (h *shortVideoHandler) DeleteShortVideo(c *gin.Context) {
+	var input shortvideo.GetShortVideoID
 
 	err := c.ShouldBindUri(&input)
 	if err != nil {
@@ -144,14 +119,15 @@ func (h *barangHandler) DeleteBarang (c *gin.Context){
 		return
 	}
 
-	_, err = h.barangService.DeleteBarang(input.ID)
+	newDel, err := h.shortVideoService.DeleteShortVideo(input.ID)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
 		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
+
 	}
-	response := helper.APIresponse(http.StatusOK, "Your Barang has been succesfuly deleted")
+	response := helper.APIresponse(http.StatusOK, newDel)
 	c.JSON(http.StatusOK, response)
 }

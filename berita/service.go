@@ -5,7 +5,8 @@ type Service interface {
 	GetAllBerita(input int) ([]Berita, error)
 	DeleteBerita(ID int) (Berita, error)
 	GetOneBerita(ID int) (Berita, error)
-	// UpdatedUser(getUpdatedInput DeletedUser, inputUser UpdatedUser) (User, error)
+	FindByTags(ID int) ([]Berita, error)
+	FindByKarya(ID int) ([]Berita, error)
 }
 
 type service struct {
@@ -49,6 +50,9 @@ func (s *service) CreateBerita(input CreateBerita, fileLocation string) (Berita,
 	createBerita := Berita{}
 
 	createBerita.BeritaMessage = input.BeritaMessage
+	createBerita.TagsID = input.TagsID
+	createBerita.KaryaNewsID = input.KaryaNewsID
+
 	createBerita.FileName = fileLocation
 
 	newBerita, err := s.repository.Save(createBerita)
@@ -56,4 +60,20 @@ func (s *service) CreateBerita(input CreateBerita, fileLocation string) (Berita,
 		return newBerita, err
 	}
 	return newBerita, nil
+}
+
+func (s *service) FindByTags(ID int) ([]Berita, error) {
+	berita, err := s.repository.FindByTags(ID)
+	if err != nil {
+		return berita, err
+	}
+	return berita, nil
+}
+
+func (s *service) FindByKarya(ID int) ([]Berita, error) {
+	berita, err := s.repository.FindByKarya(ID)
+	if err != nil {
+		return berita, err
+	}
+	return berita, nil
 }

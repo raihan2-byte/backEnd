@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"blog/artikel"
 	"blog/berita"
 	"blog/helper"
 	"blog/user"
@@ -11,15 +12,41 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type beritaHandler struct {
-	beritaService berita.Service
+type artikelHandler struct {
+	artikelService artikel.Service
 }
 
-func NewBeritaHandler(beritaService berita.Service) *beritaHandler {
-	return &beritaHandler{beritaService}
+func NewArtikelHandler(artikelService artikel.Service) *artikelHandler {
+	return &artikelHandler{artikelService}
 }
 
-func (h *beritaHandler) DeleteBerita(c *gin.Context){
+func (h *artikelHandler) DeleteArtikel(c *gin.Context) {
+	var input artikel.GetArtikel
+
+	err := c.ShouldBindUri(&input)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	newDel, err := h.artikelService.DeleteArtikel(input.ID)
+	if err != nil {
+		errors := helper.FormatValidationError(err)
+		errorMessage := gin.H{"errors": errors}
+		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+
+	}
+	response := helper.APIresponse(http.StatusOK, newDel)
+	c.JSON(http.StatusOK, response)
+
+}
+
+func (h *artikelHandler) GetOneArtikel(c *gin.Context) {
 	var input berita.GetBerita
 
 	err := c.ShouldBindUri(&input)
@@ -31,100 +58,22 @@ func (h *beritaHandler) DeleteBerita(c *gin.Context){
 		return
 	}
 
-	_, err = h.beritaService.DeleteBerita(input.ID)
+	newDel, err := h.artikelService.GetOneArtikel(input.ID)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
 		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
-		
+
 	}
-	response := helper.APIresponse(http.StatusOK, "your news has been succesfuly deleted")
+	response := helper.APIresponse(http.StatusOK, newDel)
 	c.JSON(http.StatusOK, response)
 
 }
 
-func (h *beritaHandler) GetOneBerita(c *gin.Context){
-	var input berita.GetBerita
-
-	err := c.ShouldBindUri(&input)
-	if err != nil {
-		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-	}
-
-	newDel, err := h.beritaService.GetOneBerita(input.ID)
-	if err != nil {
-		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-		
-	}
-	response := helper.APIresponse(http.StatusOK, berita.FormatterBerita(newDel))
-	c.JSON(http.StatusOK, response)
-
-}
-
-func (h *beritaHandler) GetByTags (c *gin.Context){
-	var input berita.GetTags
-
-	err := c.ShouldBindUri(&input)
-	if err != nil {
-		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-	}
-
-	barang, err := h.beritaService.FindByTags(input.Tags)
-	if err != nil {
-		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-	}
-	
-	response := helper.APIresponse(http.StatusOK, berita.FormatterGetBerita(barang))
-	c.JSON(http.StatusOK, response)
-
-}
-
-func (h *beritaHandler) GetByKarya(c *gin.Context){
-	var input berita.GetKarya
-
-	err := c.ShouldBindUri(&input)
-
-	if err != nil {
-		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-	}
-
-	barang, err := h.beritaService.FindByKarya(input.Karya)
-	if err != nil {
-		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-	}
-	
-	response := helper.APIresponse(http.StatusOK, berita.FormatterGetBerita(barang))
-	c.JSON(http.StatusOK, response)
-}
-
-func (h *beritaHandler) CreateBerita (c *gin.Context){
-	var input berita.CreateBerita
+func (h *artikelHandler) CreateArtikel (c *gin.Context){
+	var input artikel.CreateArtikel
 
 	err := c.ShouldBind(&input)
 
@@ -161,7 +110,7 @@ func (h *beritaHandler) CreateBerita (c *gin.Context){
 		return
 	}
 
-	_, err = h.beritaService.CreateBerita(input, path)
+	_, err = h.artikelService.CreateArtikel(input, path)
 	if err != nil {
 		data := gin.H{"is_uploaded": false}
 		response := helper.APIresponse(http.StatusUnprocessableEntity, data)
@@ -173,15 +122,15 @@ func (h *beritaHandler) CreateBerita (c *gin.Context){
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *beritaHandler) GetAllBerita(c *gin.Context){
+func (h *artikelHandler) GetAllArtikel(c *gin.Context){
 	input, _ := strconv.Atoi(c.Query("id"))
 
-	newBerita, err := h.beritaService.GetAllBerita(input)
+	newBerita, err := h.artikelService.GetAllArtikel(input)
 	if err != nil {
 		response := helper.APIresponse(http.StatusUnprocessableEntity, "Eror")
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
-	response := helper.APIresponse(http.StatusOK, berita.FormatterGetBerita(newBerita))
+	response := helper.APIresponse(http.StatusOK, newBerita)
 	c.JSON(http.StatusOK, response)
 }

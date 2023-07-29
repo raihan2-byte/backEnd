@@ -5,6 +5,7 @@ type Service interface {
 	GetAllBarang(input int) ([]Barang, error)
 	DeleteBarang(ID int) (Barang, error)
 	GetOneBarang(ID int) (Barang, error)
+	GetBarangByCategory(category int) ([]Barang, error)
 }
 
 type service struct {
@@ -21,6 +22,7 @@ func (s *service) CreateBarang(input InputBarang, FileLocation string) (Barang, 
 	createBarang.Nama = input.Nama
 	createBarang.Harga = input.Harga
 	createBarang.FileName = FileLocation
+	createBarang.CategoryID = input.CategoryID
 
 	newBarang, err := s.repository.Save(createBarang)
 	if err != nil {
@@ -51,6 +53,18 @@ func (s *service) DeleteBarang(ID int) (Barang, error) {
 
 func (s *service) GetOneBarang(ID int) (Barang, error) {
 	barang, err := s.repository.FindById(ID)
+	if err != nil {
+		return barang, err
+	}
+	return barang, nil
+}
+
+func (s *service) GetBarangByCategory(category int) ([]Barang, error) {
+	// createBarang := Barang{}
+
+	// createBarang.CategoryID = category.Category
+
+	barang, err := s.repository.FindByCategory(category)
 	if err != nil {
 		return barang, err
 	}
