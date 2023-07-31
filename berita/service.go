@@ -49,6 +49,7 @@ func (s *service) GetAllBerita(input int) ([]Berita, error) {
 func (s *service) CreateBerita(input CreateBerita, fileLocation string) (Berita, error) {
 	createBerita := Berita{}
 
+	createBerita.JudulBerita = input.JudulBerita
 	createBerita.BeritaMessage = input.BeritaMessage
 	createBerita.TagsID = input.TagsID
 	createBerita.KaryaNewsID = input.KaryaNewsID

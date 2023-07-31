@@ -12,6 +12,7 @@ import (
 	"blog/phototalk"
 	"blog/shortvideo"
 	"blog/user"
+	"context"
 	"log"
 	"net/http"
 	"os"
@@ -20,6 +21,8 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
+	"github.com/imagekit-developer/imagekit-go"
+	"github.com/imagekit-developer/imagekit-go/api/uploader"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -32,14 +35,14 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	dbUsername := os.Getenv("DB_USERNAME")
-	// dbPassword := os.Getenv("DB_PASSWORD")
-	dbHost := os.Getenv("DB_HOST")
-	dbPort := os.Getenv("DB_PORT")
-	dbName := os.Getenv("DB_NAME")
+	dbUsername := os.Getenv("MYSQLUSER")
+	dbPassword := os.Getenv("MYSQLPASSWORD")
+	dbHost := os.Getenv("MYSQLHOST")
+	dbPort := os.Getenv("MYSQLPORT")
+	dbName := os.Getenv("MYSQLDATABASE")
 	secretKey := os.Getenv("SECRET_KEY")
 
-	dsn := dbUsername + ":" + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local"
+	dsn := dbUsername + ":" + dbPassword + "@tcp(" + dbHost + ":" + dbPort + ")/" + dbName + "?charset=utf8mb4&parseTime=True&loc=Local"
 	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{})
 	if err != nil {
 		log.Fatal("DB Connection Error")
@@ -99,16 +102,44 @@ func main() {
 	artikelService := artikel.NewService(artikelRepository)
 	artikelHandler := handler.NewArtikelHandler(artikelService)
 
-	router := gin.Default()
-	router.Use(cors.Default())
+  router := gin.Default()
+  router.Use(cors.New(cors.Config{
+	AllowAllOrigins: true,
+	AllowHeaders: []string{"Access-Control-Allow-Origin", "Origin","Accept", "X-Requested-With", "Content-Type", "Access-Control-Request-Method", "Access-Control-Request-Headers"},
+	AllowMethods: []string{"POST, OPTIONS, GET, PUT"},
+  }))
 
+
+
+
+
+// ik, err := ImageKit.New()
+
+// // Using keys in argument
+// ik, err := ImageKit.NewFromParams(imagekit.NewParams{
+//     PrivateKey: "private_iitVYNY2fbOQSJgHtSccK9agJz0=",
+//   	PublicKey: "public_OtKeno1x/kY3zk5m7I9eNwnAtrY=",
+//   	UrlEndpoint: "https://ik.imagekit.io/raihan2"
+// })
+
+	// if err != nil {
+    //     fmt.Println("Error:", err)
+    //     return
+    // }
+// if err != nil {
+// 	// Tangani kesalahan jika ada
+// 	fmt.Println("Error:", err)
+// 	return
+// }
 
 	//user
+
+	//get all user
 	api := router.Group("/users")
 	api.POST("/register", userHandler.RegisterUser)
 	api.POST("/login", userHandler.Login)
 	api.GET("/get", authMiddleware(authService, userService), authRole(authService, userService), userHandler.GetAllUser)
-	api.DELETE("/delete/:id", authRole(authService, userService), userHandler.DeletedUser)
+	api.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), userHandler.DeletedUser)
 	api.POST("/checkemail", userHandler.CheckEmailAvailabilty)
 
 	//berita
@@ -163,41 +194,22 @@ func main() {
 	apiArtikel.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), artikelHandler.DeleteArtikel)
 	apiArtikel.GET("/:id", authMiddleware(authService, userService), authRole(authService, userService), artikelHandler.GetOneArtikel)
 
+	ctx := context.Background()
+
+	// Panggil fungsi x dan berikan konteks sebagai parameter
+	x(ctx)
+
 
 	router.Run(":8080")
 
 }
 
-// func CustomHeaderAPI(c *gin.Context) {
-//     // Add CORS headers
-//     c.Header("Access-Control-Allow-Origin", "http://example.com")
-//     c.Header("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE, OPTIONS")
-
-//     // Prepare response
-   
-// }
-
-// func CORSMiddleware() gin.HandlerFunc {
-//     return func(c *gin.Context) {
-//         c.Writer.Header().Set("Access-Control-Allow-Origin", "*")
-//         c.Writer.Header().Set("Access-Control-Allow-Credentials", "true")
-//         c.Writer.Header().Set("Access-Control-Allow-Headers", "Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, accept, origin, Cache-Control, X-Requested-With")
-//         c.Writer.Header().Set("Access-Control-Allow-Methods", "POST, OPTIONS, GET, PUT")
-
-//         if c.Request.Method == "OPTIONS" {
-//             c.AbortWithStatus(204)
-//             return
-//         }
-
-//         c.Next()
-//     }
-// }
 
 func authMiddleware(authService auth.Service, userService user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		// fmt.Println(authHeader)
-		if !strings.Contains(authHeader, "Bearer") {
+ 		if !strings.Contains(authHeader, "Bearer") {
 			response := helper.APIresponse(http.StatusUnauthorized, nil)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
@@ -235,6 +247,23 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 		c.Set("currentUser", user)
 	}
 }
+
+func x(ctx context.Context){
+	ik:=imagekit.NewFromParams(imagekit.NewParams{
+		PrivateKey: "private_iitVYNY2fbOQSJgHtSccK9agJz0=",
+		PublicKey: "public_OtKeno1x/kY3zk5m7I9eNwnAtrY=",
+		UrlEndpoint: "https://ik.imagekit.io/raihan2",
+	})
+	
+	ik.Uploader.Upload(ctx,"gambar",uploader.UploadParam{
+		FileName: "C:/Users/Faliq/Pictures/mine/fileb.jpg",
+		Tags: "barang",
+		Folder: "unj",
+	})
+
+}
+
+
 
 func authRole(authService auth.Service, userService user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {

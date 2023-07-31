@@ -47,6 +47,7 @@ func (s *service) GetAllArtikel(input int) ([]Artikel, error) {
 func (s *service) CreateArtikel(input CreateArtikel, fileLocation string) (Artikel, error) {
 	createBerita := Artikel{}
 
+	createBerita.Judul = input.Judul
 	createBerita.ArtikelMessage = input.ArtikelMessage
 	createBerita.FileName = fileLocation
 

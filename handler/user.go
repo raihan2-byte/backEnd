@@ -4,6 +4,7 @@ import (
 	"blog/auth"
 	"blog/helper"
 	"blog/user"
+	"fmt"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -44,7 +45,7 @@ func (h *userHandler) RegisterUser(c *gin.Context) {
 
 func (h *userHandler) Login(c *gin.Context) {
 	var input user.LoginInput
-
+	fmt.Println("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
 	err := c.ShouldBindJSON(&input)
 	if err != nil {
 		errors := helper.FormatValidationError(err)

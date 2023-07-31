@@ -2,6 +2,7 @@ package artikel
 
 type CreateArtikel struct {
 	ArtikelMessage string `form:"message" binding:"required"`
+	Judul          string `form:"judul" binding:"required"`
 }
 
 type GetArtikel struct {

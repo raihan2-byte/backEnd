@@ -4,6 +4,7 @@ import "time"
 
 type Berita struct {
 	ID int
+	JudulBerita string
 	BeritaMessage string
 	FileName   string
 	TagsID int
