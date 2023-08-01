@@ -36,7 +36,7 @@ func (r *repository) FindAll()([]Berita, error){
 }
 
 func (r *repository) Save(berita Berita) (Berita, error) {
-	err := r.db.Create(&berita).Error
+	err := r.db.Preload("TagsData").Preload("KaryaNewsData").Create(&berita).Error
 
 	if err != nil {
 		return berita, err
