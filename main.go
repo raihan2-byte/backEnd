@@ -107,7 +107,7 @@ func main() {
   router := gin.Default()
   router.Use(cors.New(cors.Config{
 	AllowAllOrigins: true,
-	AllowHeaders: []string{"Access-Control-Allow-Headers", "Access-Control-Allow-Origin", "Origin","Accept", "X-Requested-With", "Content-Type", "Access-Control-Request-Method", "Access-Control-Request-Headers"},
+	AllowHeaders: []string{"Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Access-Control-Allow-Origin , Origin , Accept , X-Requested-With , Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"},
 	AllowMethods: []string{"POST, OPTIONS, GET, PUT"},
   }))
 
