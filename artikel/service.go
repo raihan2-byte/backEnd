@@ -1,7 +1,7 @@
 package artikel
 
 type Service interface {
-	CreateArtikel(input CreateArtikel) (Artikel, error)
+	CreateArtikel(input CreateArtikel, FileLocation string) (Artikel, error)
 	GetAllArtikel(input int) ([]Artikel, error)
 	DeleteArtikel(ID int) (Artikel, error)
 	GetOneArtikel(ID int) (Artikel, error)
@@ -44,12 +44,12 @@ func (s *service) GetAllArtikel(input int) ([]Artikel, error) {
 	return berita, nil
 }
 
-func (s *service) CreateArtikel(input CreateArtikel) (Artikel, error) {
+func (s *service) CreateArtikel(input CreateArtikel, fileLocation string) (Artikel, error) {
 	createBerita := Artikel{}
 
 	createBerita.Judul = input.Judul
 	createBerita.ArtikelMessage = input.ArtikelMessage
-	// createBerita.FileName = fileLocation
+	createBerita.FileName = fileLocation
 
 	newBerita, err := s.repository.Save(createBerita)
 	if err != nil {
