@@ -49,7 +49,7 @@ func (s *service) CreateArtikel(input CreateArtikel, fileLocation string) (Artik
 
 	createBerita.Judul = input.Judul
 	createBerita.ArtikelMessage = input.ArtikelMessage
-	createBerita.FileName = fileLocation
+	// createBerita.FileName = fileLocation
 
 	newBerita, err := s.repository.Save(createBerita)
 	if err != nil {
