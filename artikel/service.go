@@ -73,6 +73,7 @@ func (s *service) CreateArtikel(input CreateArtikel) (Artikel, error) {
 	createBerita.Judul = input.Judul
 	createBerita.ArtikelMessage = input.ArtikelMessage
 	createBerita.FileName = fileLocation
+	createBerita.ImageBase64 = input.ImageBase64
 
 	newBerita, err := s.repository.Save(createBerita)
 	if err != nil {
