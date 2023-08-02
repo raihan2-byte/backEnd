@@ -57,7 +57,7 @@ func (s *service) CreateArtikel(input CreateArtikel) (Artikel, error) {
 		return Artikel{}, err
 	}
 
-	fileLocation := "path/to/folder/" + input.Judul + ".png"
+	fileLocation := "images" 
 	err = os.WriteFile(fileLocation, imageData, 0644)
 	if err != nil {
 		return Artikel{}, err
