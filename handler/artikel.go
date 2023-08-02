@@ -111,15 +111,15 @@ func (h *artikelHandler) CreateArtikel (c *gin.Context){
 	// 	return
 	// }
 
-	_, err = h.artikelService.CreateArtikel(input)
+	x, err := h.artikelService.CreateArtikel(input)
 	if err != nil {
 		data := gin.H{"is_uploaded": false}
 		response := helper.APIresponse(http.StatusUnprocessableEntity, data)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
-	data := gin.H{"is_uploaded": true}
-	response := helper.APIresponse(http.StatusOK, data)
+	// data := gin.H{"is_uploaded": true}
+	response := helper.APIresponse(http.StatusOK, x)
 	c.JSON(http.StatusOK, response)
 }
 
