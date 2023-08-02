@@ -58,6 +58,11 @@ func (s *service) CreateArtikel(input CreateArtikel) (Artikel, error) {
 	}
 
 	fileLocation := "images" 
+	err = os.MkdirAll(fileLocation, 0755)
+    if err != nil {
+        return Artikel{}, err
+    }
+	
 	err = os.WriteFile(fileLocation, imageData, 0644)
 	if err != nil {
 		return Artikel{}, err
