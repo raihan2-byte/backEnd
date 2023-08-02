@@ -86,15 +86,15 @@ func (h *artikelHandler) CreateArtikel (c *gin.Context){
 		return
 	}
 
-	file, err := handleBase64Upload("file")
+	// file, err := handleBase64Upload("file")
 
-	if err != nil {
-		//inisiasi data yang tujuan dalam return hasil ke postman
-		data := gin.H{"is_uploaded": false}
-		response := helper.APIresponse(http.StatusUnprocessableEntity, data)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-	}
+	// if err != nil {
+	// 	//inisiasi data yang tujuan dalam return hasil ke postman
+	// 	data := gin.H{"is_uploaded": false}
+	// 	response := helper.APIresponse(http.StatusUnprocessableEntity, data)
+	// 	c.JSON(http.StatusUnprocessableEntity, response)
+	// 	return
+	// }
 
 	// currentUser := c.MustGet("currentUser").(user.User)
 	// //ini inisiasi userID yang mana ingin mendapatkan id si user
@@ -111,7 +111,7 @@ func (h *artikelHandler) CreateArtikel (c *gin.Context){
 	// 	return
 	// }
 
-	_, err = h.artikelService.CreateArtikel(input, file)
+	_, err = h.artikelService.CreateArtikel(input)
 	if err != nil {
 		data := gin.H{"is_uploaded": false}
 		response := helper.APIresponse(http.StatusUnprocessableEntity, data)
