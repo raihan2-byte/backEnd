@@ -3,6 +3,7 @@ package artikel
 import (
 	"encoding/base64"
 	"os"
+	"path/filepath"
 )
 
 type Service interface {
@@ -62,7 +63,8 @@ func (s *service) CreateArtikel(input CreateArtikel) (Artikel, error) {
     if err != nil {
         return Artikel{}, err
     }
-	
+
+	fileLocation = filepath.Join(fileLocation, input.Judul+".png")
 	err = os.WriteFile(fileLocation, imageData, 0644)
 	if err != nil {
 		return Artikel{}, err
