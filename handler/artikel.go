@@ -138,7 +138,7 @@ func handleBase64Upload(base64String string) (string, error) {
 	// userID := currentUser.ID
 
 	// Simpan byte array menjadi file gambar
-	path := "path/to/your/"
+	path := "path/to/"
 	err = ioutil.WriteFile(path, imageData, 0644)
 	if err != nil {
 		return "", err
