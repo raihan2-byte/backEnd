@@ -5,8 +5,8 @@ import (
 	"blog/berita"
 	"blog/helper"
 	"encoding/base64"
-	"io/ioutil"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 
@@ -139,7 +139,7 @@ func handleBase64Upload(base64String string) (string, error) {
 
 	// Simpan byte array menjadi file gambar
 	path := "path/to/"
-	err = ioutil.WriteFile(path, imageData, 0644)
+	err = os.WriteFile(path, imageData, 0644)
 	if err != nil {
 		return "", err
 	}
