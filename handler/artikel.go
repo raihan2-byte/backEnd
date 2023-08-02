@@ -4,10 +4,11 @@ import (
 	"blog/artikel"
 	"blog/berita"
 	"blog/helper"
-	"blog/user"
-	"fmt"
+	"encoding/base64"
+	"io/ioutil"
 	"net/http"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -85,7 +86,7 @@ func (h *artikelHandler) CreateArtikel (c *gin.Context){
 		return
 	}
 
-	file, err := c.FormFile("file")
+	file, err := handleBase64Upload("file")
 
 	if err != nil {
 		//inisiasi data yang tujuan dalam return hasil ke postman
@@ -95,22 +96,22 @@ func (h *artikelHandler) CreateArtikel (c *gin.Context){
 		return
 	}
 
-	currentUser := c.MustGet("currentUser").(user.User)
-	//ini inisiasi userID yang mana ingin mendapatkan id si user
-	// input.User = currentUser
-	userID := currentUser.ID
+	// currentUser := c.MustGet("currentUser").(user.User)
+	// //ini inisiasi userID yang mana ingin mendapatkan id si user
+	// // input.User = currentUser
+	// userID := currentUser.ID
 
-	path := fmt.Sprintf("images/%d-%s", userID, file.Filename)
+	// path := fmt.Sprintf("images/%d-%s", userID, file)
 
-	err = c.SaveUploadedFile(file, path)
-	if err != nil {
-		data := gin.H{"is_uploaded": false}
-		response := helper.APIresponse(http.StatusUnprocessableEntity, data)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-	}
+	// err = c.SaveUploadedFile(file, path)
+	// if err != nil {
+	// 	data := gin.H{"is_uploaded": false}
+	// 	response := helper.APIresponse(http.StatusUnprocessableEntity, data)
+	// 	c.JSON(http.StatusUnprocessableEntity, response)
+	// 	return
+	// }
 
-	_, err = h.artikelService.CreateArtikel(input, path)
+	_, err = h.artikelService.CreateArtikel(input, file)
 	if err != nil {
 		data := gin.H{"is_uploaded": false}
 		response := helper.APIresponse(http.StatusUnprocessableEntity, data)
@@ -121,6 +122,31 @@ func (h *artikelHandler) CreateArtikel (c *gin.Context){
 	response := helper.APIresponse(http.StatusOK, data)
 	c.JSON(http.StatusOK, response)
 }
+
+func handleBase64Upload(base64String string) (string, error) {
+	// Menghapus "data:image/png;base64," dari base64String
+	base64String = strings.TrimPrefix(base64String, "data:image/png;base64,")
+
+	// Decode base64String menjadi byte array
+	imageData, err := base64.StdEncoding.DecodeString(base64String)
+	if err != nil {
+		return "", err
+	}
+	// currentUser := c.MustGet("currentUser").(user.User)
+	// //ini inisiasi userID yang mana ingin mendapatkan id si user
+	// // input.User = currentUser
+	// userID := currentUser.ID
+
+	// Simpan byte array menjadi file gambar
+	path := "path/to/your/"
+	err = ioutil.WriteFile(path, imageData, 0644)
+	if err != nil {
+		return "", err
+	}
+
+	return path, nil
+}
+
 
 func (h *artikelHandler) GetAllArtikel(c *gin.Context){
 	input, _ := strconv.Atoi(c.Query("id"))
