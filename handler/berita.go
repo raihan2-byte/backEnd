@@ -230,9 +230,9 @@ func beritaImageKit(ctx context.Context, base64Image string) (string, error) {
 	})
 
 	resp, err := ik.Uploader.Upload(ctx, base64Image, uploader.UploadParam{
-		FileName: "test_image.jpg",
-		Tags:     "barang",
-		Folder:   "unj",
+		FileName: "berita.jpg",
+		Tags:     "beritaunj",
+		Folder:   "berita",
 	})
 
 	if err != nil {

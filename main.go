@@ -108,32 +108,7 @@ func main() {
 	AllowMethods: []string{"POST, OPTIONS, GET, PUT"},
   }))
 
-
-
-
-
-// ik, err := ImageKit.New()
-
-// // Using keys in argument
-// ik, err := ImageKit.NewFromParams(imagekit.NewParams{
-//     PrivateKey: "private_iitVYNY2fbOQSJgHtSccK9agJz0=",
-//   	PublicKey: "public_OtKeno1x/kY3zk5m7I9eNwnAtrY=",
-//   	UrlEndpoint: "https://ik.imagekit.io/raihan2"
-// })
-
-	// if err != nil {
-    //     fmt.Println("Error:", err)
-    //     return
-    // }
-// if err != nil {
-// 	// Tangani kesalahan jika ada
-// 	fmt.Println("Error:", err)
-// 	return
-// }
-
 	//user
-
-	//get all user
 	api := router.Group("/users")
 	api.POST("/register", userHandler.RegisterUser)
 	api.POST("/login", userHandler.Login)
@@ -146,7 +121,7 @@ func main() {
 	apiBerita.POST("/", authMiddleware(authService, userService), authRole(authService, userService),  beritaHandler.CreateBerita)
 	apiBerita.GET("/", beritaHandler.GetAllBerita)
 	apiBerita.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), beritaHandler.DeleteBerita)
-	apiBerita.GET("/:id", authMiddleware(authService, userService), authRole(authService, userService), beritaHandler.GetOneBerita)
+	apiBerita.GET("/:id", beritaHandler.GetOneBerita)
 	apiBerita.GET("/tags/:id", beritaHandler.GetByTags)
 	apiBerita.GET("/karya/:id", beritaHandler.GetByKarya)
 
@@ -154,50 +129,45 @@ func main() {
 	//barang
 	apiBarang := router.Group("/barang")
 	apiBarang.POST("/", authMiddleware(authService, userService), authRole(authService, userService), barangHandler.CreateBarang)
-	apiBarang.GET("/", authMiddleware(authService, userService), authRole(authService, userService), barangHandler.GetAllBarang)
+	apiBarang.GET("/", barangHandler.GetAllBarang)
 	apiBarang.DELETE("/delete/:id", authMiddleware(authService, userService) , authRole(authService, userService), barangHandler.DeleteBarang)
-	apiBarang.GET("/:id", authMiddleware(authService, userService) , authRole(authService, userService), barangHandler.GetOneBarang)
+	apiBarang.GET("/:id", barangHandler.GetOneBarang)
 	apiBarang.GET("/category/:id",barangHandler.GetCategoryBarang)
 
 	//photoTalk
 	apiPhotoTalk := router.Group("/phototalk")
 	apiPhotoTalk.POST("/", authMiddleware(authService, userService), authRole(authService, userService), photoTalkHandler.CreatePhotoTalk)
-	apiPhotoTalk.GET("/", authMiddleware(authService, userService), authRole(authService, userService), photoTalkHandler.GetAllPhotoTalk)
-	apiPhotoTalk.GET("/:id", authMiddleware(authService, userService) , authRole(authService, userService), photoTalkHandler.GetOnePhotoTalk)
+	apiPhotoTalk.GET("/", photoTalkHandler.GetAllPhotoTalk)
+	apiPhotoTalk.DELETE("/delete/:id", authMiddleware(authService, userService) , authRole(authService, userService), photoTalkHandler.DeletePhotoTalk)
+	apiPhotoTalk.GET("/:id", photoTalkHandler.GetOnePhotoTalk)
 
 	//karyakmpf
 	apikaryakmpf := router.Group("/karyakmpf")
 	apikaryakmpf.POST("/", authMiddleware(authService, userService), authRole(authService, userService), karyakmpfHandler.CreateKMPF)
-	apikaryakmpf.GET("/", authMiddleware(authService, userService), authRole(authService, userService), karyakmpfHandler.GetAllKMPF)
+	apikaryakmpf.GET("/", karyakmpfHandler.GetAllKMPF)
 	apikaryakmpf.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), karyakmpfHandler.DeleteKMPF)
-	apikaryakmpf.GET("/:id", authMiddleware(authService, userService), authRole(authService, userService), karyakmpfHandler.GetOneKMPF)
+	apikaryakmpf.GET("/:id", karyakmpfHandler.GetOneKMPF)
 
 	//merch
 	apimerch := router.Group("/merch")
 	apimerch.POST("/", authMiddleware(authService, userService), authRole(authService, userService), merchHandler.CreateMerch)
-	apimerch.GET("/", authMiddleware(authService, userService), authRole(authService, userService), merchHandler.GetAllMerch)
+	apimerch.GET("/", merchHandler.GetAllMerch)
 	apimerch.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), merchHandler.DeleteMerch)
-	apimerch.GET("/:id", authMiddleware(authService, userService), authRole(authService, userService), merchHandler.GetOneMerch)
+	apimerch.GET("/:id",  merchHandler.GetOneMerch)
 
 	//ShortVideo
 	apiShortVideo := router.Group("/short-video")
 	apiShortVideo.POST("/", authMiddleware(authService, userService), authRole(authService, userService), shortVideoHandler.CreateShortVideo)
-	apiShortVideo.GET("/", authMiddleware(authService, userService), authRole(authService, userService), shortVideoHandler.GetAllShortVideo)
+	apiShortVideo.GET("/", shortVideoHandler.GetAllShortVideo)
 	apiShortVideo.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), shortVideoHandler.DeleteShortVideo)
-	apiShortVideo.GET("/:id", authMiddleware(authService, userService), authRole(authService, userService), shortVideoHandler.GetOneShortVideo)
+	apiShortVideo.GET("/:id", shortVideoHandler.GetOneShortVideo)
 
 	//artikel
 	apiArtikel := router.Group("/artikel")
 	apiArtikel.POST("/", authMiddleware(authService, userService), authRole(authService, userService), artikelHandler.CreateArtikel)
 	apiArtikel.GET("/", artikelHandler.GetAllArtikel)
 	apiArtikel.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), artikelHandler.DeleteArtikel)
-	apiArtikel.GET("/:id", authMiddleware(authService, userService), authRole(authService, userService), artikelHandler.GetOneArtikel)
-
-	// ctx := context.Background()
-
-	// // Panggil fungsi x dan berikan konteks sebagai parameter
-	// x(ctx)
-
+	apiArtikel.GET("/:id", artikelHandler.GetOneArtikel)
 
 	router.Run(":8080")
 
@@ -247,20 +217,6 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 	}
 }
 
-// func x(ctx context.Context){
-// 	ik:=imagekit.NewFromParams(imagekit.NewParams{
-// 		PrivateKey: "private_iitVYNY2fbOQSJgHtSccK9agJz0=",
-// 		PublicKey: "public_OtKeno1x/kY3zk5m7I9eNwnAtrY=",
-// 		UrlEndpoint: "https://ik.imagekit.io/raihan2",
-// 	})
-	
-// 	ik.Uploader.Upload(ctx,"gambar",uploader.UploadParam{
-// 		FileName: "C:/Users/Faliq/Pictures/mine/fileb.jpg",
-// 		Tags: "barang",
-// 		Folder: "unj",
-// 	})
-
-// }
 
 
 

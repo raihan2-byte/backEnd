@@ -126,9 +126,9 @@ func kmpfImageKit(ctx context.Context, base64Image string) (string, error) {
 	})
 
 	resp, err := ik.Uploader.Upload(ctx, base64Image, uploader.UploadParam{
-		FileName: "test_image.jpg",
-		Tags:     "barang",
-		Folder:   "unj",
+		FileName: "kmpf.jpg",
+		Tags:     "kmpfunj",
+		Folder:   "kmpf",
 	})
 
 	if err != nil {

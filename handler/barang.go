@@ -126,9 +126,9 @@ func barangImageKit(ctx context.Context, base64Image string) (string, error) {
 	})
 
 	resp, err := ik.Uploader.Upload(ctx, base64Image, uploader.UploadParam{
-		FileName: "test_image.jpg",
-		Tags:     "barang",
-		Folder:   "unj",
+		FileName: "barang.jpg",
+		Tags:     "barangunj",
+		Folder:   "barang",
 	})
 
 	if err != nil {
