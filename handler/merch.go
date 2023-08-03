@@ -2,20 +2,16 @@ package handler
 
 import (
 	"blog/helper"
+	"blog/imagekits"
 	"blog/merch"
 	"bytes"
 	"context"
-	"encoding/base64"
-	"errors"
 	"fmt"
 	"io"
 	"net/http"
 	"strconv"
-	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/imagekit-developer/imagekit-go"
-	"github.com/imagekit-developer/imagekit-go/api/uploader"
 )
 
 type merchHandler struct {
@@ -40,14 +36,14 @@ func (h *merchHandler) CreateMerch (c *gin.Context){
 		return 
 	}	
 
-	img,err:=merchBase64toEncode(buf.Bytes())
+	img,err:=imagekits.Base64toEncode(buf.Bytes())
 	if err!=nil{
 		fmt.Println("error reading image %v",err)
 	}
 
 	fmt.Println("image base 64 format : %v",img)
 
-	imageKitURL, err := merchImageKit(context.Background(), img)
+	imageKitURL, err := imagekits.ImageKit(context.Background(), img)
 	if err != nil {
 		// Tangani jika terjadi kesalahan saat upload gambar
 		// Misalnya, Anda dapat mengembalikan respon error ke klien jika diperlukan
@@ -86,63 +82,6 @@ func (h *merchHandler) CreateMerch (c *gin.Context){
 	data := gin.H{"is_uploaded": true}
 	response := helper.APIresponse(http.StatusOK, data)
 	c.JSON(http.StatusOK, response)
-}
-
-func merchBase64toEncode(bytes []byte) (string,error){
-	var base64Encoding string
-
-	// Determine the content type of the image file
-	mimeType := http.DetectContentType(bytes)
-
-	// Prepend the appropriate URI scheme header depending
-	// on the MIME type
-	switch mimeType {
-	case "image/jpeg":
-		base64Encoding += "data:image/jpeg;base64,"
-	case "image/png":
-		base64Encoding += "data:image/png;base64,"
-	}
-
-	// Append the base64 encoded output
-	base64Encoding += merchtoBase64(bytes)
-
-	// Print the full base64 representation of the image
-	fmt.Println(base64Encoding)
-	return base64Encoding,nil
-}
-
-func merchtoBase64(b []byte) string {
-	return base64.StdEncoding.EncodeToString(b)
-}
-
-func merchImageKit(ctx context.Context, base64Image string) (string, error) {
-	fmt.Println("start uploading image ...")
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
-	defer cancel()
-	ik := imagekit.NewFromParams(imagekit.NewParams{
-		PrivateKey:  "private_iitVYNY2fbOQSJgHtSccK9agJz0=",
-		PublicKey:   "public_OtKeno1x/kY3zk5m7I9eNwnAtrY=",
-		UrlEndpoint: "https://ik.imagekit.io/raihan2",
-	})
-
-	resp, err := ik.Uploader.Upload(ctx, base64Image, uploader.UploadParam{
-		FileName: "merch.jpg",
-		Tags:     "merchunj",
-		Folder:   "merch",
-	})
-
-	if err != nil {
-		fmt.Printf("an error occurred when uploading image %v", err)
-		return "", err
-	}
-
-	if resp.StatusCode != 200 {
-		fmt.Printf("an error occurred when uploading image %v", resp)
-		return "", errors.New("failed to upload image")
-	}
-
-	// Return the ImageKit URL
-	return resp.Data.Url, nil
 }
 
 func (h *merchHandler) GetAllMerch(c *gin.Context) {

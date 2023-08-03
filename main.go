@@ -46,12 +46,6 @@ func main() {
 	if err != nil {
 		log.Fatal("DB Connection Error")
 	}
-	// 1.User (Login, Register dll)
-	// 2.Admin CRUD berita
-	// 3.Admin CRUD barang
-	// 4.Admin CRUD PhotoTalk
-	// 5.Admin CRUD Merch
-	// 6.Admin CRUD Karya kmpf unj
 
 	err = db.AutoMigrate(&user.User{}, &berita.Berita{}, &barang.Barang{}, &phototalk.PhotoTalk{}, &karyakmpf.KMPF{}, &merch.Merch{}, &barang.Category{}, &berita.TagsBerita{}, &shortvideo.ShortVideo{}, &berita.KaryaBerita{}, &artikel.Artikel{})
 	if err != nil {
