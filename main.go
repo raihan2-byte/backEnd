@@ -12,7 +12,6 @@ import (
 	"blog/phototalk"
 	"blog/shortvideo"
 	"blog/user"
-	"context"
 	"log"
 	"net/http"
 	"os"
@@ -21,8 +20,6 @@ import (
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
-	"github.com/imagekit-developer/imagekit-go"
-	"github.com/imagekit-developer/imagekit-go/api/uploader"
 	"github.com/joho/godotenv"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
@@ -196,10 +193,10 @@ func main() {
 	apiArtikel.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), artikelHandler.DeleteArtikel)
 	apiArtikel.GET("/:id", authMiddleware(authService, userService), authRole(authService, userService), artikelHandler.GetOneArtikel)
 
-	ctx := context.Background()
+	// ctx := context.Background()
 
-	// Panggil fungsi x dan berikan konteks sebagai parameter
-	x(ctx)
+	// // Panggil fungsi x dan berikan konteks sebagai parameter
+	// x(ctx)
 
 
 	router.Run(":8080")
@@ -250,20 +247,20 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 	}
 }
 
-func x(ctx context.Context){
-	ik:=imagekit.NewFromParams(imagekit.NewParams{
-		PrivateKey: "private_iitVYNY2fbOQSJgHtSccK9agJz0=",
-		PublicKey: "public_OtKeno1x/kY3zk5m7I9eNwnAtrY=",
-		UrlEndpoint: "https://ik.imagekit.io/raihan2",
-	})
+// func x(ctx context.Context){
+// 	ik:=imagekit.NewFromParams(imagekit.NewParams{
+// 		PrivateKey: "private_iitVYNY2fbOQSJgHtSccK9agJz0=",
+// 		PublicKey: "public_OtKeno1x/kY3zk5m7I9eNwnAtrY=",
+// 		UrlEndpoint: "https://ik.imagekit.io/raihan2",
+// 	})
 	
-	ik.Uploader.Upload(ctx,"gambar",uploader.UploadParam{
-		FileName: "C:/Users/Faliq/Pictures/mine/fileb.jpg",
-		Tags: "barang",
-		Folder: "unj",
-	})
+// 	ik.Uploader.Upload(ctx,"gambar",uploader.UploadParam{
+// 		FileName: "C:/Users/Faliq/Pictures/mine/fileb.jpg",
+// 		Tags: "barang",
+// 		Folder: "unj",
+// 	})
 
-}
+// }
 
 
 

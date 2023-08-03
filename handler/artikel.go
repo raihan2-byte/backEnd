@@ -3,13 +3,19 @@ package handler
 import (
 	"blog/artikel"
 	"blog/helper"
+	"blog/user"
+	"bytes"
+	"context"
 	"encoding/base64"
+	"fmt"
+	"io"
 	"net/http"
-	"os"
 	"strconv"
-	"strings"
+	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/imagekit-developer/imagekit-go"
+	"github.com/imagekit-developer/imagekit-go/api/uploader"
 )
 
 type artikelHandler struct {
@@ -73,9 +79,32 @@ func (h *artikelHandler) GetOneArtikel(c *gin.Context) {
 }
 
 func (h *artikelHandler) CreateArtikel (c *gin.Context){
+	file, err := c.FormFile("file")
+	src,err:=file.Open()
+	defer 	src.Close()
+	if err!=nil{
+		fmt.Printf("error when open file %v",err)
+	}
+	
+	buf:=bytes.NewBuffer(nil)
+	if _, err := io.Copy(buf, src); err != nil {
+		fmt.Printf("error read file %v",err)
+		return 
+	}	
+
+	img,err:=y(buf.Bytes())
+	if err!=nil{
+		fmt.Println("error reading image %v",err)
+	}
+
+	fmt.Println("image base 64 format : %v",img)
+
+	x(context.Background(),img)
+	
+
 	var input artikel.CreateArtikel
 
-	err := c.ShouldBind(&input)
+	err = c.ShouldBind(&input)
 
 	if err != nil {
 		errors := helper.FormatValidationError(err)
@@ -85,67 +114,93 @@ func (h *artikelHandler) CreateArtikel (c *gin.Context){
 		return
 	}
 
-	// file, err := handleBase64Upload("file")
+	if err != nil {
+		//inisiasi data yang tujuan dalam return hasil ke postman
+		data := gin.H{"is_uploaded": false}
+		response := helper.APIresponse(http.StatusUnprocessableEntity, data)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
 
-	// if err != nil {
-	// 	//inisiasi data yang tujuan dalam return hasil ke postman
-	// 	data := gin.H{"is_uploaded": false}
-	// 	response := helper.APIresponse(http.StatusUnprocessableEntity, data)
-	// 	c.JSON(http.StatusUnprocessableEntity, response)
-	// 	return
-	// }
+	currentUser := c.MustGet("currentUser").(user.User)
+	//ini inisiasi userID yang mana ingin mendapatkan id si user
+	// input.User = currentUser
+	userID := currentUser.ID
 
-	// currentUser := c.MustGet("currentUser").(user.User)
-	// //ini inisiasi userID yang mana ingin mendapatkan id si user
-	// // input.User = currentUser
-	// userID := currentUser.ID
+	path := fmt.Sprintf("images/%d-%s", userID, file.Filename)
 
-	// path := fmt.Sprintf("images/%d-%s", userID, file)
+	err = c.SaveUploadedFile(file, path)
+	if err != nil {
+		data := gin.H{"is_uploaded": false}
+		response := helper.APIresponse(http.StatusUnprocessableEntity, data)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
 
-	// err = c.SaveUploadedFile(file, path)
-	// if err != nil {
-	// 	data := gin.H{"is_uploaded": false}
-	// 	response := helper.APIresponse(http.StatusUnprocessableEntity, data)
-	// 	c.JSON(http.StatusUnprocessableEntity, response)
-	// 	return
-	// }
-
-	x, err := h.artikelService.CreateArtikel(input)
+	_, err = h.artikelService.CreateArtikel(input, path)
 	if err != nil {
 		// data := gin.H{"is_uploaded": false}
 		response := helper.APIresponse(http.StatusUnprocessableEntity, err)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
-	// data := gin.H{"is_uploaded": true}
-	response := helper.APIresponse(http.StatusOK, x)
+	data := gin.H{"is_uploaded": true}
+	response := helper.APIresponse(http.StatusOK, data)
 	c.JSON(http.StatusOK, response)
 }
 
-func handleBase64Upload(base64String string) (string, error) {
-	// Menghapus "data:image/png;base64," dari base64String
-	base64String = strings.TrimPrefix(base64String, "data:image/png;base64,")
+func y(bytes []byte) (string,error){
+	var base64Encoding string
 
-	// Decode base64String menjadi byte array
-	imageData, err := base64.StdEncoding.DecodeString(base64String)
-	if err != nil {
-		return "", err
-	}
-	// currentUser := c.MustGet("currentUser").(user.User)
-	// //ini inisiasi userID yang mana ingin mendapatkan id si user
-	// // input.User = currentUser
-	// userID := currentUser.ID
+	// Determine the content type of the image file
+	mimeType := http.DetectContentType(bytes)
 
-	// Simpan byte array menjadi file gambar
-	path := "path/to/"
-	err = os.WriteFile(path, imageData, 0644)
-	if err != nil {
-		return "", err
+	// Prepend the appropriate URI scheme header depending
+	// on the MIME type
+	switch mimeType {
+	case "image/jpeg":
+		base64Encoding += "data:image/jpeg;base64,"
+	case "image/png":
+		base64Encoding += "data:image/png;base64,"
 	}
 
-	return path, nil
+	// Append the base64 encoded output
+	base64Encoding += toBase64(bytes)
+
+	// Print the full base64 representation of the image
+	fmt.Println(base64Encoding)
+	return base64Encoding,nil
 }
 
+func toBase64(b []byte) string {
+	return base64.StdEncoding.EncodeToString(b)
+}
+
+func x(ctx context.Context, base64Image string){
+	fmt.Println("start uploading image ...")
+	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+    defer cancel()
+	ik:=imagekit.NewFromParams(imagekit.NewParams{
+		PrivateKey: "private_iitVYNY2fbOQSJgHtSccK9agJz0=",
+		PublicKey: "public_OtKeno1x/kY3zk5m7I9eNwnAtrY=",
+		UrlEndpoint: "https://ik.imagekit.io/raihan2",
+	})
+	
+	resp,err:=ik.Uploader.Upload(ctx,base64Image,uploader.UploadParam{
+		FileName: "test_image.jpg",
+		Tags: "barang",
+		Folder: "unj",
+	})
+
+	if err!=nil{
+		fmt.Printf("an error occurred when uploading image %v",err)
+	}
+
+	if resp.StatusCode!=200{
+		fmt.Printf("an error occurred when uploading image %v",resp)
+	}
+
+}
 
 func (h *artikelHandler) GetAllArtikel(c *gin.Context){
 	input, _ := strconv.Atoi(c.Query("id"))

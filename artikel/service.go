@@ -1,13 +1,7 @@
 package artikel
 
-import (
-	"encoding/base64"
-	"os"
-	"path/filepath"
-)
-
 type Service interface {
-	CreateArtikel(input CreateArtikel) (Artikel, error)
+	CreateArtikel(input CreateArtikel, fileLocation string) (Artikel, error)
 	GetAllArtikel(input int) ([]Artikel, error)
 	DeleteArtikel(ID int) (Artikel, error)
 	GetOneArtikel(ID int) (Artikel, error)
@@ -50,30 +44,12 @@ func (s *service) GetAllArtikel(input int) ([]Artikel, error) {
 	return berita, nil
 }
 
-func (s *service) CreateArtikel(input CreateArtikel) (Artikel, error) {
+func (s *service) CreateArtikel(input CreateArtikel, fileLocation string) (Artikel, error) {
 	createBerita := Artikel{}
-
-	imageData, err := base64.StdEncoding.DecodeString(input.ImageBase64)
-	if err != nil {
-		return Artikel{}, err
-	}
-
-	fileLocation := "images" 
-	err = os.MkdirAll(fileLocation, 0755)
-    if err != nil {
-        return Artikel{}, err
-    }
-
-	fileLocation = filepath.Join(fileLocation, input.Judul+".png")
-	err = os.WriteFile(fileLocation, imageData, 0644)
-	if err != nil {
-		return Artikel{}, err
-	}
 
 	createBerita.Judul = input.Judul
 	createBerita.ArtikelMessage = input.ArtikelMessage
 	createBerita.FileName = fileLocation
-	createBerita.ImageBase64 = input.ImageBase64
 
 	newBerita, err := s.repository.Save(createBerita)
 	if err != nil {
