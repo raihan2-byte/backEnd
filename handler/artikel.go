@@ -79,9 +79,9 @@ func (h *artikelHandler) GetOneArtikel(c *gin.Context) {
 }
 
 func (h *artikelHandler) CreateArtikel (c *gin.Context){
-	file, err := c.FormFile("file")
+	file, _ := c.FormFile("file")
 	src,err:=file.Open()
-	defer 	src.Close()
+	defer	src.Close()
 	if err!=nil{
 		fmt.Printf("error when open file %v",err)
 	}
@@ -92,14 +92,14 @@ func (h *artikelHandler) CreateArtikel (c *gin.Context){
 		return 
 	}	
 
-	img,err:=y(buf.Bytes())
+	img,err:=artikelBase64toEncode(buf.Bytes())
 	if err!=nil{
 		fmt.Println("error reading image %v",err)
 	}
 
 	fmt.Println("image base 64 format : %v",img)
 
-	imageKitURL, err := x(context.Background(), img)
+	imageKitURL, err := artikelImageKit(context.Background(), img)
 	if err != nil {
 		// Tangani jika terjadi kesalahan saat upload gambar
 		// Misalnya, Anda dapat mengembalikan respon error ke klien jika diperlukan
@@ -107,10 +107,8 @@ func (h *artikelHandler) CreateArtikel (c *gin.Context){
 		c.JSON(http.StatusInternalServerError, response)
 		return
 	}
-	
 
 	var input artikel.CreateArtikel
-	
 
 	err = c.ShouldBind(&input)
 
@@ -130,31 +128,6 @@ func (h *artikelHandler) CreateArtikel (c *gin.Context){
 		return
 	}
 
-	// currentUser := c.MustGet("currentUser").(user.User)
-	// //ini inisiasi userID yang mana ingin mendapatkan id si user
-	// // input.User = currentUser
-	// userID := currentUser.ID
-
-	// path := fmt.Sprintf(imageKitURL)
-
-	// input.FileName = imageKitURL
-
-	// artikel := Artikel{
-	// 	Judul:          input.Judul,
-	// 	ArtikelMessage: input.ArtikelMessage,
-	// 	FileName:       file.Filename, // Set nilai FileName dengan nama file asli yang diunggah
-	// 	CreatedAt:      time.Now(),
-	// 	UpdatedAt:      time.Now(),
-	// }
-
-	// err = c.SaveUploadedFile(file, imageKitURL)
-	// if err != nil {
-	// 	// data := gin.H{"is_uploaded": false}
-	// 	response := helper.APIresponse(http.StatusUnprocessableEntity, err)
-	// 	c.JSON(http.StatusUnprocessableEntity, response)
-	// 	return
-	// }
-
 	_, err = h.artikelService.CreateArtikel(input, imageKitURL)
 	if err != nil {
 		// data := gin.H{"is_uploaded": false}
@@ -167,7 +140,7 @@ func (h *artikelHandler) CreateArtikel (c *gin.Context){
 	c.JSON(http.StatusOK, response)
 }
 
-func y(bytes []byte) (string,error){
+func artikelBase64toEncode(bytes []byte) (string,error){
 	var base64Encoding string
 
 	// Determine the content type of the image file
@@ -183,18 +156,18 @@ func y(bytes []byte) (string,error){
 	}
 
 	// Append the base64 encoded output
-	base64Encoding += toBase64(bytes)
+	base64Encoding += ArtikeltoBase64(bytes)
 
 	// Print the full base64 representation of the image
 	fmt.Println(base64Encoding)
 	return base64Encoding,nil
 }
 
-func toBase64(b []byte) string {
+func ArtikeltoBase64(b []byte) string {
 	return base64.StdEncoding.EncodeToString(b)
 }
 
-func x(ctx context.Context, base64Image string) (string, error) {
+func artikelImageKit(ctx context.Context, base64Image string) (string, error) {
 	fmt.Println("start uploading image ...")
 	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
 	defer cancel()
