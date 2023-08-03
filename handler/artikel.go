@@ -2,7 +2,6 @@ package handler
 
 import (
 	"blog/artikel"
-	"blog/berita"
 	"blog/helper"
 	"encoding/base64"
 	"net/http"
@@ -48,7 +47,7 @@ func (h *artikelHandler) DeleteArtikel(c *gin.Context) {
 }
 
 func (h *artikelHandler) GetOneArtikel(c *gin.Context) {
-	var input berita.GetBerita
+	var input artikel.GetArtikel
 
 	err := c.ShouldBindUri(&input)
 	if err != nil {

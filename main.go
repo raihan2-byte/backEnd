@@ -192,7 +192,7 @@ func main() {
 	//artikel
 	apiArtikel := router.Group("/artikel")
 	apiArtikel.POST("/", authMiddleware(authService, userService), authRole(authService, userService), artikelHandler.CreateArtikel)
-	apiArtikel.GET("/", authMiddleware(authService, userService), authRole(authService, userService), artikelHandler.GetAllArtikel)
+	apiArtikel.GET("/", artikelHandler.GetAllArtikel)
 	apiArtikel.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), artikelHandler.DeleteArtikel)
 	apiArtikel.GET("/:id", authMiddleware(authService, userService), authRole(authService, userService), artikelHandler.GetOneArtikel)
 
