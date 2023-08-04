@@ -41,6 +41,7 @@ func FormatterBerita (berita Berita) BeritaStructFormatter{
 	tagsDataFormatter := TagsDataStructFormatter{}
 	tagsDataFormatter.ID = tagsData.ID
 	tagsDataFormatter.Name = tagsData.Name
+	tagsDataFormatter.KaryaBeritaID = tagsData.KaryaBeritaID
 
 	formatter.TagsData = tagsDataFormatter
 
