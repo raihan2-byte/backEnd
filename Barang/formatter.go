@@ -21,6 +21,7 @@ type CategoryBarang struct {
 func FormatterBarang (barang Barang) CreateBarangFormatter {
 	formatter := CreateBarangFormatter{
 		ID:        barang.ID,
+		Harga: barang.Harga,
 		Nama:   barang.Nama,
 		FileName:    barang.FileName,
 		CategoryID : barang.CategoryID,
