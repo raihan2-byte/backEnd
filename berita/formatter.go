@@ -4,6 +4,7 @@ import "time"
 
 type BeritaStructFormatter struct {
 	ID            int         `json:"id"`
+	Judul string      `json:"judul"`
 	BeritaMessage string      `json:"berita_message"`
 	FileName      string      `json:"file_name"`
 	TagsID        int         `json:"tags_id"`
@@ -28,6 +29,7 @@ type KaryaBeritaStructFormatter struct {
 func FormatterBerita (berita Berita) BeritaStructFormatter{
 	formatter := BeritaStructFormatter{
 		ID: berita.ID,
+		Judul: berita.JudulBerita,
 		BeritaMessage: berita.BeritaMessage,
 		FileName: berita.FileName,
 		TagsID: berita.TagsID,
