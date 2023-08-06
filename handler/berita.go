@@ -127,12 +127,18 @@ func (h *beritaHandler) GetByKarya(c *gin.Context){
 }
 
 func (h *beritaHandler) CreateBerita(c *gin.Context){
-	file, _ := c.FormFile("file")
-	src,err:=file.Open()
-	defer	src.Close()
-	if err!=nil{
-		fmt.Printf("error when open file %v",err)
+	file, err := c.FormFile("file")
+	if err != nil {
+		fmt.Printf("error when open file: %v", err)
+		return
 	}
+	
+	src, err := file.Open()
+	if err != nil {
+		fmt.Printf("error when open file: %v", err)
+		return
+	}
+	defer src.Close()
 	
 	buf:=bytes.NewBuffer(nil)
 	if _, err := io.Copy(buf, src); err != nil {
