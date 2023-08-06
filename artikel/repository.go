@@ -24,7 +24,7 @@ func NewRepository(db *gorm.DB) *repository {
 func (r *repository) FindAll() ([]Artikel, error) {
 	var karya []Artikel
 
-	err := r.db.Find(&karya).Error
+	err := r.db.Order("id DESC").Find(&karya).Error
 	if err != nil {
 		return karya, err
 	}

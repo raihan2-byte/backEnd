@@ -21,7 +21,7 @@ func NewRepository(db *gorm.DB) *repository {
 func (r *repository) FindAll() ([]KMPF, error){
 	var kmpf []KMPF
 
-	err := r.db.Find(&kmpf).Error
+	err := r.db.Order("id DESC").Find(&kmpf).Error
 	if err != nil {
 		return kmpf, err
 	}

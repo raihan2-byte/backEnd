@@ -31,7 +31,7 @@ func (r *repository) Save(barang Barang) (Barang, error) {
 func (r *repository) FindAll() ([]Barang, error){
 	var barang []Barang
 
-	err := r.db.Preload("CategoryData").Find(&barang).Error
+	err := r.db.Order("id DESC").Preload("CategoryData").Find(&barang).Error
 
 	if err != nil {
 		return barang, err

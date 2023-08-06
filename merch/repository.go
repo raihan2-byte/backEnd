@@ -28,7 +28,7 @@ func NewRepository(db *gorm.DB) *repository {
 func (r *repository) FindAll()([]Merch, error){
 	var merch []Merch
 
-	err := r.db.Find(&merch).Error
+	err := r.db.Order("id DESC").Find(&merch).Error
 	if err != nil {
 		return merch, err
 	}
