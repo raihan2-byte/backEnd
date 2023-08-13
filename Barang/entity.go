@@ -4,7 +4,9 @@ import "time"
 
 type Barang struct {
 	ID        int
+	NamaPaket *string
 	Nama      string
+	HargaAwal *int
 	Harga     int
 	FileName  string
 	CategoryID int

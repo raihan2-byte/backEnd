@@ -19,7 +19,9 @@ func NewService(repository Repository) *service {
 func (s *service) CreateBarang(input InputBarang, FileLocation string) (Barang, error) {
 	createBarang := Barang{}
 
+	createBarang.NamaPaket = input.NamaPaket
 	createBarang.Nama = input.Nama
+	createBarang.HargaAwal = input.HargaAwal
 	createBarang.Harga = input.Harga
 	createBarang.FileName = FileLocation
 	createBarang.CategoryID = input.CategoryID
