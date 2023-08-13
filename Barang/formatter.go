@@ -4,7 +4,9 @@ import "time"
 
 type CreateBarangFormatter struct {
 	ID        int `json:"id"`
+	NamaPaket    *string `json:"nama_paket"`
 	Nama      string `json:"nama"`
+	HargaAwal    *int    `json:"harga_awal"`
 	Harga     int `json:"harga"`
 	FileName  string `json:"file_name"`
 	CategoryID int `json:"category_id"`
@@ -21,8 +23,10 @@ type CategoryBarang struct {
 func FormatterBarang (barang Barang) CreateBarangFormatter {
 	formatter := CreateBarangFormatter{
 		ID:        barang.ID,
-		Harga: barang.Harga,
+		NamaPaket: barang.NamaPaket,
 		Nama:   barang.Nama,
+		HargaAwal: barang.HargaAwal,
+		Harga: barang.Harga,
 		FileName:    barang.FileName,
 		CategoryID : barang.CategoryID,
 		CreatedAt: barang.CreatedAt,
