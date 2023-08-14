@@ -5,6 +5,7 @@ type InputBarang struct {
 	Nama         string  `form:"nama" binding:"required"`
 	HargaAwal    *int    `form:"harga_awal"`
 	Harga        int     `form:"harga" binding:"required"`
+	Diskon       *int    `form:"discount"`
 	CategoryID   int     `form:"categoryID" binding:"required"`
 	CategoryData Category
 }

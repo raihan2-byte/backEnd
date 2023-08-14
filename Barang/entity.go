@@ -10,6 +10,7 @@ type Barang struct {
 	Harga     int
 	FileName  string
 	CategoryID int
+	Diskon *int
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	CategoryData Category `gorm:"foreignKey:CategoryID"`

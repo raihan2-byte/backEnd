@@ -23,6 +23,7 @@ func (s *service) CreateBarang(input InputBarang, FileLocation string) (Barang, 
 	createBarang.Nama = input.Nama
 	createBarang.HargaAwal = input.HargaAwal
 	createBarang.Harga = input.Harga
+	createBarang.Diskon = input.Diskon
 	createBarang.FileName = FileLocation
 	createBarang.CategoryID = input.CategoryID
 
