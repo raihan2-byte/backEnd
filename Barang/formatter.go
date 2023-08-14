@@ -10,6 +10,7 @@ type CreateBarangFormatter struct {
 	Harga     int `json:"harga"`
 	FileName  string `json:"file_name"`
 	CategoryID int `json:"category_id"`
+	Diskon *int `json:"discount"`
 	CreatedAt time.Time `json:"created_at"`
 	UpdatedAt time.Time `json:"updated_at"`
 	Category CategoryBarang `json:"category_barang"`
@@ -27,6 +28,7 @@ func FormatterBarang (barang Barang) CreateBarangFormatter {
 		Nama:   barang.Nama,
 		HargaAwal: barang.HargaAwal,
 		Harga: barang.Harga,
+		Diskon : barang.Diskon,
 		FileName:    barang.FileName,
 		CategoryID : barang.CategoryID,
 		CreatedAt: barang.CreatedAt,
