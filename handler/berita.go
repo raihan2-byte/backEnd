@@ -101,19 +101,7 @@ func (h *beritaHandler) GetByTags (c *gin.Context){
 }
 
 func (h *beritaHandler) GetByKarya(c *gin.Context){
-	var input berita.GetKarya
-
-	err := c.ShouldBindUri(&input)
-
-	if err != nil {
-		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-	}
-
-	barang, err := h.beritaService.FindByKarya(input.Karya)
+	barang, err := h.beritaService.FindByKarya()
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}

@@ -6,7 +6,7 @@ type Service interface {
 	DeleteBerita(ID int) (Berita, error)
 	GetOneBerita(ID int) (Berita, error)
 	FindByTags(ID int) ([]Berita, error)
-	FindByKarya(ID int) ([]Berita, error)
+	FindByKarya() ([]Berita, error)
 }
 
 type service struct {
@@ -71,8 +71,8 @@ func (s *service) FindByTags(ID int) ([]Berita, error) {
 	return berita, nil
 }
 
-func (s *service) FindByKarya(ID int) ([]Berita, error) {
-	berita, err := s.repository.FindByKarya(ID)
+func (s *service) FindByKarya() ([]Berita, error) {
+	berita, err := s.repository.FindByKarya([]int{1, 2, 3})
 	if err != nil {
 		return berita, err
 	}

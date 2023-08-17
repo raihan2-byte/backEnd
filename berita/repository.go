@@ -7,7 +7,7 @@ type Repository interface {
 	Save(berita Berita) (Berita, error)
 	FindById(ID int) (Berita, error)
 	FindAll() ([]Berita, error)
-	FindByKarya(Karya int) ([]Berita, error)
+	FindByKarya(ID []int) ([]Berita, error)
 	FindByTags(tags int) ([]Berita, error)
 	Update(berita Berita) (Berita, error)
 	Delete(berita Berita) (Berita, error)
@@ -55,10 +55,10 @@ func (r *repository) FindByTags(tags int) ([]Berita, error) {
 	return berita, nil
 }
 
-func (r *repository) FindByKarya(Karya int) ([]Berita, error) {
+func (r *repository) FindByKarya(ID []int) ([]Berita, error) {
 	var berita []Berita
 
-	err := r.db.Preload("TagsData").Preload("KaryaNewsData").Where("karya_news_id = ?", Karya).Find(&berita).Error
+	err := r.db.Preload("TagsData").Preload("KaryaNewsData").Joins("JOIN karya_berita ON karya_berita.id = berita.karya_news_id").Find(&berita).Error
 	if err != nil {
 		return berita, err
 	}
