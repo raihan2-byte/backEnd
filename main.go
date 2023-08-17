@@ -117,7 +117,7 @@ func main() {
 	apiBerita.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), beritaHandler.DeleteBerita)
 	apiBerita.GET("/:id", beritaHandler.GetOneBerita)
 	apiBerita.GET("/tags/:id", beritaHandler.GetByTags)
-	apiBerita.GET("/karya/:id", beritaHandler.GetByKarya)
+	apiBerita.GET("/karya", beritaHandler.GetByKarya)
 
 	
 	//barang
