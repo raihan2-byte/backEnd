@@ -58,7 +58,7 @@ func (r *repository) FindByTags(tags int) ([]Berita, error) {
 func (r *repository) FindByKarya(ID []int) ([]Berita, error) {
 	var berita []Berita
 
-	err := r.db.Preload("TagsData").Preload("KaryaNewsData").Where("karya_news_id IN ?", ID).Find(&berita).Error
+	err := r.db.Order("id DESC").Preload("TagsData").Preload("KaryaNewsData").Where("karya_news_id IN ?", ID).Find(&berita).Error
 	if err != nil {
 		return berita, err
 	}
