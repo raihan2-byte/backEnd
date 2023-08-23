@@ -69,7 +69,7 @@ func (r *repository) FindByKarya(ID []int) ([]Berita, error) {
 func (r *repository) FindById(ID int) (Berita, error) {
 	var berita Berita
 
-	err := r.db.Where("id = ?", ID).Find(&berita).Error
+	err := r.db.Preload("TagsData").Preload("KaryaNewsData").Where("id = ?", ID).Find(&berita).Error
 
 	if err != nil {
 		return berita, err
