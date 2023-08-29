@@ -106,7 +106,7 @@ func main() {
 	api := router.Group("/users")
 	api.POST("/register", userHandler.RegisterUser)
 	api.POST("/login", userHandler.Login)
-	api.GET("/get", authMiddleware(authService, userService), authRole(authService, userService), userHandler.GetAllUser)
+	api.GET("/get", userHandler.GetAllUser)
 	api.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), userHandler.DeletedUser)
 	api.POST("/checkemail", userHandler.CheckEmailAvailabilty)
 
