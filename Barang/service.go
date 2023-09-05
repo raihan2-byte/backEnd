@@ -25,7 +25,6 @@ func (s *service) CreateBarang(input InputBarang, FileLocation string) (Barang, 
 	createBarang.Harga = input.Harga
 	createBarang.Diskon = input.Diskon
 	createBarang.FileName = FileLocation
-	createBarang.Link = input.Link
 	createBarang.CategoryID = input.CategoryID
 
 	newBarang, err := s.repository.Save(createBarang)

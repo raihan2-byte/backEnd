@@ -50,6 +50,7 @@ func (s *service) CreateMerch(input CreateMerch, fileLocation string) (Merch, er
 
 	createMerch.Name = input.Name
 	createMerch.Price = input.Price
+	createMerch.Link = input.Link
 	createMerch.FileName = fileLocation
 
 	newMerch, err := s.repository.Save(createMerch)

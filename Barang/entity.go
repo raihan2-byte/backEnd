@@ -11,7 +11,6 @@ type Barang struct {
 	FileName  string
 	CategoryID int
 	Diskon *int
-	Link string
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	CategoryData Category `gorm:"foreignKey:CategoryID"`
