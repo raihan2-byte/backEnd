@@ -6,6 +6,7 @@ type Service interface {
 	DeleteBarang(ID int) (Barang, error)
 	GetOneBarang(ID int) (Barang, error)
 	GetBarangByCategory(category int) ([]Barang, error)
+	UpdateBarang(GetIdBarang GetBarang, input InputBarang, FileLocation string) (Barang, error)
 }
 
 type service struct {
@@ -14,6 +15,26 @@ type service struct {
 
 func NewService(repository Repository) *service {
 	return &service{repository}
+}
+
+func (s *service) UpdateBarang(GetIdBarang GetBarang, input InputBarang, FileLocation string) (Barang, error) {
+	barang, err := s.repository.FindById(GetIdBarang.ID)
+	if err != nil {
+		return barang, err
+	}
+	barang.NamaPaket = input.NamaPaket
+	barang.Nama = input.Nama
+	barang.HargaAwal = input.HargaAwal
+	barang.Harga = input.Harga
+	barang.Diskon = input.Diskon
+	barang.FileName = FileLocation
+	barang.CategoryID = input.CategoryID
+
+	newBarang, err := s.repository.Update(barang)
+	if err != nil {
+		return newBarang, err
+	}
+	return newBarang, nil
 }
 
 func (s *service) CreateBarang(input InputBarang, FileLocation string) (Barang, error) {
