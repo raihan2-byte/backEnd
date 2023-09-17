@@ -7,6 +7,7 @@ type Service interface {
 	GetOneBerita(ID int) (Berita, error)
 	FindByTags(ID int) ([]Berita, error)
 	FindByKarya() ([]Berita, error)
+	UpdateBerita(GetIdBerita GetBerita, input CreateBerita, FileName string) (Berita, error)
 }
 
 type service struct {
@@ -17,6 +18,26 @@ func NewService(repository Repository) *service {
 	return &service{repository}
 }
 
+func (s *service) UpdateBerita(GetIdBerita GetBerita, input CreateBerita, fileLocation string) (Berita, error) {
+	berita, err := s.repository.FindById(GetIdBerita.ID)
+	if err != nil {
+		return berita, err
+	}
+
+	berita.JudulBerita = input.JudulBerita
+	berita.JudulBerita = input.JudulBerita
+	berita.BeritaMessage = input.BeritaMessage
+	berita.TagsID = input.TagsID
+	berita.KaryaNewsID = input.KaryaNewsID
+
+	berita.FileName = fileLocation
+
+	newBerita, err := s.repository.Update(berita)
+	if err != nil {
+		return newBerita, err
+	}
+	return newBerita, nil
+}
 func (s *service) GetOneBerita(ID int) (Berita, error) {
 	berita, err := s.repository.FindById(ID)
 	if err != nil {
