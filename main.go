@@ -115,6 +115,7 @@ func main() {
 	apiBerita.POST("/", authMiddleware(authService, userService), authRole(authService, userService),  beritaHandler.CreateBerita)
 	apiBerita.GET("/", beritaHandler.GetAllBerita)
 	apiBerita.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), beritaHandler.DeleteBerita)
+	apiBerita.PUT("update/:id", authMiddleware(authService, userService), authRole(authService, userService), beritaHandler.UpdateBerita)
 	apiBerita.GET("/:id", beritaHandler.GetOneBerita)
 	apiBerita.GET("/tags/:id", beritaHandler.GetByTags)
 	apiBerita.GET("/karya", beritaHandler.GetByKarya)
