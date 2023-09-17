@@ -126,7 +126,7 @@ func main() {
 	apiBarang.POST("/", authMiddleware(authService, userService), authRole(authService, userService), barangHandler.CreateBarang)
 	apiBarang.GET("/", barangHandler.GetAllBarang)
 	apiBarang.DELETE("/delete/:id", authMiddleware(authService, userService) , authRole(authService, userService), barangHandler.DeleteBarang)
-	apiBerita.PUT("updateBarang/:id", authMiddleware(authService, userService), authRole(authService, userService), barangHandler.UpdateBarang)
+	apiBarang.PUT("update/:id", authMiddleware(authService, userService), authRole(authService, userService), barangHandler.UpdateBarang)
 	apiBarang.GET("/:id", barangHandler.GetOneBarang)
 	apiBarang.GET("/category/:id",barangHandler.GetCategoryBarang)
 
