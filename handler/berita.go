@@ -170,7 +170,7 @@ func (h *beritaHandler) CreateBerita(c *gin.Context){
 		return
 	}
 
-	_, err = h.beritaService.CreateBerita(input, imageKitURL)
+	_, err = h.beritaService.CreateBerita(input, imageKitURL, imageKitURL, imageKitURL)
 	if err != nil {
 		// data := gin.H{"is_uploaded": false}
 		response := helper.APIresponse(http.StatusUnprocessableEntity, err)

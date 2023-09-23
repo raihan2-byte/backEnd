@@ -1,7 +1,7 @@
 package berita
 
 type Service interface {
-	CreateBerita(input CreateBerita, FileLocation string) (Berita, error)
+	CreateBerita(input CreateBerita, FileLocation string, fileLocation2 string, fileLocation3 string) (Berita, error)
 	GetAllBerita(input int) ([]Berita, error)
 	DeleteBerita(ID int) (Berita, error)
 	GetOneBerita(ID int) (Berita, error)
@@ -29,7 +29,6 @@ func (s *service) UpdateBerita(GetIdBerita GetBerita, input CreateBerita, fileLo
 	berita.BeritaMessage = input.BeritaMessage
 	berita.TagsID = input.TagsID
 	berita.KaryaNewsID = input.KaryaNewsID
-
 	berita.FileName = fileLocation
 
 	newBerita, err := s.repository.Update(berita)
@@ -67,15 +66,16 @@ func (s *service) GetAllBerita(input int) ([]Berita, error) {
 	return berita, nil
 }
 
-func (s *service) CreateBerita(input CreateBerita, fileLocation string) (Berita, error) {
+func (s *service) CreateBerita(input CreateBerita, fileLocation string, fileLocation2 string, fileLocation3 string) (Berita, error) {
 	createBerita := Berita{}
 
 	createBerita.JudulBerita = input.JudulBerita
 	createBerita.BeritaMessage = input.BeritaMessage
 	createBerita.TagsID = input.TagsID
 	createBerita.KaryaNewsID = input.KaryaNewsID
-
 	createBerita.FileName = fileLocation
+	createBerita.FileName2 = fileLocation2
+	createBerita.FileName3 = fileLocation3
 
 	newBerita, err := s.repository.Save(createBerita)
 	if err != nil {

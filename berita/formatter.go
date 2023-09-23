@@ -7,6 +7,8 @@ type BeritaStructFormatter struct {
 	Judul string      `json:"judul"`
 	BeritaMessage string      `json:"berita_message"`
 	FileName      string      `json:"file_name"`
+	FileName2      string      `json:"file_name_2"`
+	FileName3      string      `json:"file_name_3"`
 	TagsID        int         `json:"tags_id"`
 	KaryaNewsID   *int        `json:"karya_news_id"`
 	CreatedAt     time.Time   `json:"created_at"`
@@ -32,6 +34,8 @@ func FormatterBerita (berita Berita) BeritaStructFormatter{
 		Judul: berita.JudulBerita,
 		BeritaMessage: berita.BeritaMessage,
 		FileName: berita.FileName,
+		FileName2: berita.FileName2,
+		FileName3: berita.FileName3,
 		TagsID: berita.TagsID,
 		KaryaNewsID: berita.KaryaNewsID,
 		CreatedAt: berita.CreatedAt,

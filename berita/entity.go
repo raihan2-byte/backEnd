@@ -7,6 +7,8 @@ type Berita struct {
 	JudulBerita string
 	BeritaMessage string
 	FileName   string
+	FileName2   string
+	FileName3   string
 	TagsID int
 	KaryaNewsID *int 
 	CreatedAt  time.Time
