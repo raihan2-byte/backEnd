@@ -47,7 +47,7 @@ func main() {
 		log.Fatal("DB Connection Error")
 	}
 
-	err = db.AutoMigrate(&user.User{}, &berita.Berita{}, &barang.Barang{}, &phototalk.PhotoTalk{}, &karyakmpf.KMPF{}, &merch.Merch{}, &barang.Category{}, &berita.TagsBerita{}, &shortvideo.ShortVideo{}, &berita.KaryaBerita{}, &artikel.Artikel{})
+	err = db.AutoMigrate(&user.User{}, &berita.Berita{}, &barang.Barang{}, &phototalk.PhotoTalk{}, &karyakmpf.KMPF{}, &merch.Merch{}, &barang.Category{}, &berita.TagsBerita{}, &shortvideo.ShortVideo{}, &berita.KaryaBerita{}, &artikel.Artikel{}, &berita.BeritaImage{})
 	if err != nil {
 		log.Fatal("eror migration")
 	}
