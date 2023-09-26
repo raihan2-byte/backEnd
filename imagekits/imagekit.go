@@ -47,7 +47,7 @@ func ImageKit(ctx context.Context, base64Image string) (string, error) {
     urlEndpoint := os.Getenv("IMAGEKIT_URL_ENDPOINT")
 
 	fmt.Println("start uploading image ...")
-	ctx, cancel := context.WithTimeout(ctx, 10*time.Second)
+	ctx, cancel := context.WithTimeout(ctx, 25*time.Second)
 	defer cancel()
 	ik := imagekit.NewFromParams(imagekit.NewParams{
 		PrivateKey:  privateKey,
