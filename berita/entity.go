@@ -6,16 +6,24 @@ type Berita struct {
 	ID int
 	JudulBerita string
 	BeritaMessage string
-	FileName   string
-	FileName2   string
-	FileName3   string
 	TagsID int
 	KaryaNewsID *int 
 	CreatedAt  time.Time
 	UpdatedAt  time.Time
 	TagsData TagsBerita `gorm:"foreignKey:TagsID"`
 	KaryaNewsData KaryaBerita `gorm:"foreignKey:KaryaNewsID"`
+	FileName       []BeritaImage `gorm:"foreignKey:BeritaID"`
+
 	
+}
+
+type BeritaImage struct {
+    ID        int      `gorm:"primaryKey"`
+    FileName  string    
+	BeritaID  int      
+	CreatedAt time.Time 
+    UpdatedAt time.Time 
+
 }
 
 type TagsBerita struct {

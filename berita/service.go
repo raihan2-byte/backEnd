@@ -1,13 +1,14 @@
 package berita
 
 type Service interface {
-	CreateBerita(input CreateBerita, FileLocation string, fileLocation2 string, fileLocation3 string) (Berita, error)
+	CreateBerita(input CreateBerita) (Berita, error)
 	GetAllBerita(input int) ([]Berita, error)
 	DeleteBerita(ID int) (Berita, error)
 	GetOneBerita(ID int) (Berita, error)
 	FindByTags(ID int) ([]Berita, error)
+	CreateBeritaImage(BeritaID int, FileName string) error
 	FindByKarya() ([]Berita, error)
-	UpdateBerita(GetIdBerita GetBerita, input CreateBerita, FileName string) (Berita, error)
+	UpdateBerita(GetIdBerita GetBerita, input CreateBerita) (Berita, error)
 }
 
 type service struct {
@@ -18,7 +19,21 @@ func NewService(repository Repository) *service {
 	return &service{repository}
 }
 
-func (s *service) UpdateBerita(GetIdBerita GetBerita, input CreateBerita, fileLocation string) (Berita, error) {
+func (s *service) CreateBeritaImage(beritaID int, FileName string) error {
+	createBerita := BeritaImage{}
+
+	createBerita.FileName = FileName
+	createBerita.BeritaID = beritaID
+
+	err := s.repository.CreateImage(createBerita)
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+func (s *service) UpdateBerita(GetIdBerita GetBerita, input CreateBerita) (Berita, error) {
 	berita, err := s.repository.FindById(GetIdBerita.ID)
 	if err != nil {
 		return berita, err
@@ -29,7 +44,6 @@ func (s *service) UpdateBerita(GetIdBerita GetBerita, input CreateBerita, fileLo
 	berita.BeritaMessage = input.BeritaMessage
 	berita.TagsID = input.TagsID
 	berita.KaryaNewsID = input.KaryaNewsID
-	berita.FileName = fileLocation
 
 	newBerita, err := s.repository.Update(berita)
 	if err != nil {
@@ -66,16 +80,13 @@ func (s *service) GetAllBerita(input int) ([]Berita, error) {
 	return berita, nil
 }
 
-func (s *service) CreateBerita(input CreateBerita, fileLocation string, fileLocation2 string, fileLocation3 string) (Berita, error) {
+func (s *service) CreateBerita(input CreateBerita) (Berita, error) {
 	createBerita := Berita{}
 
 	createBerita.JudulBerita = input.JudulBerita
 	createBerita.BeritaMessage = input.BeritaMessage
 	createBerita.TagsID = input.TagsID
 	createBerita.KaryaNewsID = input.KaryaNewsID
-	createBerita.FileName = fileLocation
-	createBerita.FileName2 = fileLocation2
-	createBerita.FileName3 = fileLocation3
 
 	newBerita, err := s.repository.Save(createBerita)
 	if err != nil {

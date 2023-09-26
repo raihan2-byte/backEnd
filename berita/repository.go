@@ -5,6 +5,7 @@ import "gorm.io/gorm"
 type Repository interface {
 	//create User
 	Save(berita Berita) (Berita, error)
+	CreateImage(berita BeritaImage) (error)
 	FindById(ID int) (Berita, error)
 	FindAll() ([]Berita, error)
 	FindByKarya(ID []int) ([]Berita, error)
@@ -21,14 +22,10 @@ func NewRepository(db *gorm.DB) *repository {
 	return &repository{db}
 }
 
-// CreateImage(berita Berita) (Berita, error){
-
-// }
-
 func (r *repository) FindAll()([]Berita, error){
 	var berita []Berita
 
-	err := r.db.Order("id DESC").Preload("TagsData").Preload("KaryaNewsData").Find(&berita).Error
+	err := r.db.Order("id DESC").Preload("TagsData").Preload("KaryaNewsData").Preload("FileName").Find(&berita).Error
 	if err != nil {
 		return berita, err
 	}
@@ -44,6 +41,16 @@ func (r *repository) Save(berita Berita) (Berita, error) {
 	return berita, nil
 }
 
+func (r *repository) CreateImage(berita BeritaImage) (error) {
+	err := r.db.Create(&berita).Error
+
+	// if err != nil {
+		return  err
+	// }
+	// return berita, nil
+}
+
+
 func (r *repository) FindByTags(tags int) ([]Berita, error) {
 	var berita []Berita
 
@@ -58,7 +65,7 @@ func (r *repository) FindByTags(tags int) ([]Berita, error) {
 func (r *repository) FindByKarya(ID []int) ([]Berita, error) {
 	var berita []Berita
 
-	err := r.db.Order("id DESC").Preload("TagsData").Preload("KaryaNewsData").Where("karya_news_id IN ?", ID).Find(&berita).Error
+	err := r.db.Preload("TagsData").Preload("KaryaNewsData").Where("karya_news_id IN ?", ID).Find(&berita).Error
 	if err != nil {
 		return berita, err
 	}
@@ -69,7 +76,7 @@ func (r *repository) FindByKarya(ID []int) ([]Berita, error) {
 func (r *repository) FindById(ID int) (Berita, error) {
 	var berita Berita
 
-	err := r.db.Preload("TagsData").Preload("KaryaNewsData").Where("id = ?", ID).Find(&berita).Error
+	err := r.db.Where("id = ?", ID).Preload("TagsData").Preload("KaryaNewsData").Preload("FileName").Find(&berita).Error
 
 	if err != nil {
 		return berita, err
