@@ -3,7 +3,7 @@ package berita
 type Service interface {
 	CreateBerita(input CreateBerita) (Berita, error)
 	GetAllBerita(input int) ([]Berita, error)
-	DeleteBerita(ID int) (Berita, error)
+	DeleteBerita(ID int) error
 	GetOneBerita(ID int) (Berita, error)
 	FindByTags(ID int) ([]Berita, error)
 	CreateBeritaImage(BeritaID int, FileName string) error
@@ -59,17 +59,30 @@ func (s *service) GetOneBerita(ID int) (Berita, error) {
 	return berita, nil
 }
 
-func (s *service) DeleteBerita(ID int) (Berita, error) {
+func (s *service) DeleteBerita(ID int) error {
+	// Konversi beritaID menjadi tipe data yang sesuai (misalnya, int)
+	// Lakukan validasi ID jika diperlukan
+
+	// Cek apakah berita ada di basis data
 	berita, err := s.repository.FindById(ID)
 	if err != nil {
-		return berita, err
+		return err // Berita tidak ditemukan atau terjadi kesalahan lainnya
 	}
 
-	newBerita, err := s.repository.Delete(berita)
+	news, err := s.repository.Delete(berita)
 	if err != nil {
-		return newBerita, err
+		return err // Tangani kesalahan jika penghapusan berita gagal
 	}
-	return newBerita, nil
+
+	// Hapus gambar yang terkait dengan berita jika ada
+	err = s.repository.DeleteImages(news.ID)
+	if err != nil {
+		return err // Tangani kesalahan jika penghapusan gambar gagal
+	}
+
+	// Hapus berita dari basis data
+
+	return nil
 }
 
 func (s *service) GetAllBerita(input int) ([]Berita, error) {

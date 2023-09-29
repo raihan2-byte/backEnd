@@ -12,6 +12,7 @@ type Repository interface {
 	FindByTags(tags int) ([]Berita, error)
 	Update(berita Berita) (Berita, error)
 	Delete(berita Berita) (Berita, error)
+	DeleteImages(beritaID int) error
 }
 
 type repository struct {
@@ -101,4 +102,13 @@ func (r *repository) Delete(berita Berita) (Berita, error) {
 	}
 
 	return berita, nil
+}
+
+func (r *repository) DeleteImages(beritaID int) error {
+    err := r.db.Where("berita_id = ?", beritaID).Delete(&BeritaImage{}).Error
+    if err != nil {
+        return err
+    }
+
+    return nil
 }

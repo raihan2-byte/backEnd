@@ -25,6 +25,8 @@ func NewBeritaHandler(beritaService berita.Service) *beritaHandler {
 func (h *beritaHandler) DeleteBerita(c *gin.Context){
 	var input berita.GetBerita
 
+	// var inputImages berita.GetBeritaImages
+
 	err := c.ShouldBindUri(&input)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
@@ -34,14 +36,14 @@ func (h *beritaHandler) DeleteBerita(c *gin.Context){
 		return
 	}
 
-	_, err = h.beritaService.DeleteBerita(input.ID)
+	 err = h.beritaService.DeleteBerita(input.ID)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
 		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
-		
+
 	}
 	response := helper.APIresponse(http.StatusOK, "your news has been succesfuly deleted")
 	c.JSON(http.StatusOK, response)
@@ -204,40 +206,6 @@ c.JSON(http.StatusOK, response)
 }
 
 func (h *beritaHandler) UpdateBerita (c *gin.Context){
-	// file, err := c.FormFile("file")
-	// if err != nil {
-	// 	fmt.Printf("error when open file: %v", err)
-	// 	return
-	// }
-	
-	// src, err := file.Open()
-	// if err != nil {
-	// 	fmt.Printf("error when open file: %v", err)
-	// 	return
-	// }
-	// defer src.Close()
-	
-	// buf:=bytes.NewBuffer(nil)
-	// if _, err := io.Copy(buf, src); err != nil {
-	// 	fmt.Printf("error read file %v",err)
-	// 	return 
-	// }	
-
-	// img,err:=imagekits.Base64toEncode(buf.Bytes())
-	// if err!=nil{
-	// 	fmt.Println("error reading image %v",err)
-	// }
-
-	// fmt.Println("image base 64 format : %v",img)
-
-	// imageKitURL, err := imagekits.ImageKit(context.Background(), img)
-	// if err != nil {
-	// 	// Tangani jika terjadi kesalahan saat upload gambar
-	// 	// Misalnya, Anda dapat mengembalikan respon error ke klien jika diperlukan
-	// 	response := helper.APIresponse(http.StatusInternalServerError, "Failed to upload image")
-	// 	c.JSON(http.StatusInternalServerError, response)
-	// 	return
-	// }
 
 	var inputID berita.GetBerita
 	err := c.ShouldBindUri(&inputID)
