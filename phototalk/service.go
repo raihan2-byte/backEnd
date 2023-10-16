@@ -20,6 +20,7 @@ func (s *service) CreatePhotoTalk(input InputPhoto, FileName string) (PhotoTalk,
 
 	photoTalk.Judul = input.Judul
 	photoTalk.Deskripsi = input.Deskripsi
+	photoTalk.Link = input.Link
 	photoTalk.FileName = FileName
 
 	newPhotoTalk, err := s.repository.Save(photoTalk)
