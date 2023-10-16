@@ -19,6 +19,7 @@ func (s *service) CreatePhotoTalk(input InputPhoto, FileName string) (PhotoTalk,
 	photoTalk := PhotoTalk{}
 
 	photoTalk.Judul = input.Judul
+	photoTalk.ShortDeskripsi = input.ShortDeskripsi
 	photoTalk.Deskripsi = input.Deskripsi
 	photoTalk.Link = input.Link
 	photoTalk.FileName = FileName
