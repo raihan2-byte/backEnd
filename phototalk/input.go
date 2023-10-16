@@ -1,10 +1,9 @@
 package phototalk
 
 type InputPhoto struct {
-	Judul          string `form:"judul" binding:"required"`
-	ShortDeskripsi string `form:"short_deskripsi" binding:"required"`
-	Link           string `form:"link" binding:"required"`
-	Deskripsi      string `form:"deskripsi" binding:"required"`
+	Judul     string `form:"judul" binding:"required"`
+	Link      string `form:"link" binding:"required"`
+	Deskripsi string `form:"deskripsi" binding:"required"`
 }
 
 type GetPhotoTalkID struct {
