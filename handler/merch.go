@@ -1,6 +1,7 @@
 package handler
 
 import (
+	endpointcount "blog/endpointCount"
 	"blog/helper"
 	"blog/imagekits"
 	"blog/merch"
@@ -16,10 +17,11 @@ import (
 
 type merchHandler struct {
 	merchService merch.Service
+	endpointService endpointcount.StatisticsService
 }
 
-func NewMerchHandler(merchService merch.Service) *merchHandler {
-	return &merchHandler{merchService}
+func NewMerchHandler(merchService merch.Service, endpointService endpointcount.StatisticsService) *merchHandler {
+	return &merchHandler{merchService, endpointService}
 }
 
 func (h *merchHandler) CreateMerch (c *gin.Context){
@@ -94,6 +96,16 @@ func (h *merchHandler) GetAllMerch(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
+
+	userAgent := c.GetHeader("User-Agent")
+
+	err = h.endpointService.IncrementCount("View All Merch", userAgent)
+    if err != nil {
+        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+    }
+
 	response := helper.APIresponse(http.StatusOK, newBerita)
 	c.JSON(http.StatusOK, response)
 
@@ -121,6 +133,16 @@ func (h *merchHandler) GetOneMerch(c *gin.Context) {
 		return
 		
 	}
+
+	userAgent := c.GetHeader("User-Agent")
+
+	err = h.endpointService.IncrementCount("View Merch", userAgent)
+    if err != nil {
+        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+    }
+
 	response := helper.APIresponse(http.StatusOK, newDel)
 	c.JSON(http.StatusOK, response)
 }

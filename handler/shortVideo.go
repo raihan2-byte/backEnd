@@ -1,6 +1,7 @@
 package handler
 
 import (
+	endpointcount "blog/endpointCount"
 	"blog/helper"
 	"blog/imagekits"
 	"blog/shortvideo"
@@ -16,10 +17,11 @@ import (
 
 type shortVideoHandler struct {
 	shortVideoService shortvideo.Service
+	endpointService endpointcount.StatisticsService
 }
 
-func NewShortVideoHandler(shortVideoService shortvideo.Service) *shortVideoHandler {
-	return &shortVideoHandler{shortVideoService}
+func NewShortVideoHandler(shortVideoService shortvideo.Service, endpointService endpointcount.StatisticsService) *shortVideoHandler {
+	return &shortVideoHandler{shortVideoService, endpointService}
 }
 
 func (h *shortVideoHandler) CreateShortVideo (c *gin.Context){
@@ -94,6 +96,16 @@ func (h *shortVideoHandler) GetAllShortVideo(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
+
+	userAgent := c.GetHeader("User-Agent")
+
+	err = h.endpointService.IncrementCount("View All Short Video", userAgent)
+    if err != nil {
+        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+    }
+
 	response := helper.APIresponse(http.StatusOK, newBerita)
 	c.JSON(http.StatusOK, response)
 
@@ -120,6 +132,16 @@ func (h *shortVideoHandler) GetOneShortVideo(c *gin.Context) {
 		return
 
 	}
+
+	userAgent := c.GetHeader("User-Agent")
+
+	err = h.endpointService.IncrementCount("View Short Video", userAgent)
+    if err != nil {
+        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+    }
+
 	response := helper.APIresponse(http.StatusOK, newDel)
 	c.JSON(http.StatusOK, response)
 }

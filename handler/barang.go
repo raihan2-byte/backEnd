@@ -2,6 +2,7 @@ package handler
 
 import (
 	barang "blog/Barang"
+	endpointcount "blog/endpointCount"
 	"blog/helper"
 	"blog/imagekits"
 	"bytes"
@@ -16,10 +17,11 @@ import (
 
 type barangHandler struct {
 	barangService barang.Service
+	endpointService endpointcount.StatisticsService
 }
 
-func NewBarangHandler(barangService barang.Service) *barangHandler {
-	return &barangHandler{barangService}
+func NewBarangHandler(barangService barang.Service, endpointService endpointcount.StatisticsService) *barangHandler {
+	return &barangHandler{barangService, endpointService}
 }
 
 func (h *barangHandler) CreateBarang(c *gin.Context){
@@ -95,6 +97,16 @@ func (h *barangHandler) GetAllBarang (c *gin.Context){
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
+
+	userAgent := c.GetHeader("User-Agent")
+
+	err = h.endpointService.IncrementCount("View All Rent", userAgent)
+    if err != nil {
+        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+    }
+
 	response := helper.APIresponse(http.StatusOK, barang.FormatterGetCategory(data))
 	c.JSON(http.StatusOK, response)
 }
@@ -119,6 +131,16 @@ func (h *barangHandler) GetOneBarang (c *gin.Context){
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
+
+	userAgent := c.GetHeader("User-Agent")
+
+	err = h.endpointService.IncrementCount("View Rent", userAgent)
+    if err != nil {
+        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+    }
+
 	response := helper.APIresponse(http.StatusOK, barang.FormatterBarang(data))
 	c.JSON(http.StatusOK, response)
 }

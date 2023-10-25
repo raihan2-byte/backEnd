@@ -2,6 +2,7 @@ package handler
 
 import (
 	"blog/artikel"
+	endpointcount "blog/endpointCount"
 	"blog/helper"
 	"blog/imagekits"
 	"bytes"
@@ -16,10 +17,11 @@ import (
 
 type artikelHandler struct {
 	artikelService artikel.Service
+	endpointService endpointcount.StatisticsService
 }
 
-func NewArtikelHandler(artikelService artikel.Service) *artikelHandler {
-	return &artikelHandler{artikelService}
+func NewArtikelHandler(artikelService artikel.Service, endpointService endpointcount.StatisticsService) *artikelHandler {
+	return &artikelHandler{artikelService, endpointService}
 }
 
 func (h *artikelHandler) DeleteArtikel(c *gin.Context) {
@@ -69,6 +71,16 @@ func (h *artikelHandler) GetOneArtikel(c *gin.Context) {
 		return
 
 	}
+
+	userAgent := c.GetHeader("User-Agent")
+
+	err = h.endpointService.IncrementCount("View Article", userAgent)
+    if err != nil {
+        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+    }
+
 	response := helper.APIresponse(http.StatusOK, newDel)
 	c.JSON(http.StatusOK, response)
 
@@ -131,6 +143,7 @@ func (h *artikelHandler) CreateArtikel (c *gin.Context){
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
+
 	data := gin.H{"is_uploaded": true}
 	response := helper.APIresponse(http.StatusOK, data)
 	c.JSON(http.StatusOK, response)
@@ -146,6 +159,16 @@ func (h *artikelHandler) GetAllArtikel(c *gin.Context){
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
+
+	userAgent := c.GetHeader("User-Agent")
+
+	err = h.endpointService.IncrementCount("View All Article", userAgent)
+    if err != nil {
+        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+    }
+
 	response := helper.APIresponse(http.StatusOK, newBerita)
 	c.JSON(http.StatusOK, response)
 }

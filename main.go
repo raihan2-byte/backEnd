@@ -5,6 +5,7 @@ import (
 	"blog/artikel"
 	"blog/auth"
 	"blog/berita"
+	endpointcount "blog/endpointCount"
 	"blog/handler"
 	"blog/helper"
 	"blog/karyakmpf"
@@ -47,13 +48,18 @@ func main() {
 		log.Fatal("DB Connection Error")
 	}
 
-	err = db.AutoMigrate(&user.User{}, &berita.Berita{}, &barang.Barang{}, &phototalk.PhotoTalk{}, &karyakmpf.KMPF{}, &merch.Merch{}, &barang.Category{}, &berita.TagsBerita{}, &shortvideo.ShortVideo{}, &berita.KaryaBerita{}, &artikel.Artikel{}, &berita.BeritaImage{})
+	err = db.AutoMigrate(&user.User{}, &endpointcount.Statistics{}, &berita.Berita{}, &barang.Barang{}, &phototalk.PhotoTalk{}, &karyakmpf.KMPF{}, &merch.Merch{}, &barang.Category{}, &berita.TagsBerita{}, &shortvideo.ShortVideo{}, &berita.KaryaBerita{}, &artikel.Artikel{}, &berita.BeritaImage{})
 	if err != nil {
 		log.Fatal("eror migration")
 	}
 	//auth
 	authService := auth.NewService()
 	authService.SetSecretKey(secretKey)
+	statisticsRepository := endpointcount.NewStatisticsRepository(db)
+	// Inisialisasi service
+	statisticsService := endpointcount.NewStatisticsService(statisticsRepository)
+	// Inisialisasi handler
+	statisticsHandler := handler.NewStatisticsHandler(statisticsService)
 
 	//user
 	userRepository := user.NewRepository(db)
@@ -63,17 +69,17 @@ func main() {
 	//berita
 	beritaRepository := berita.NewRepository(db)
 	beritaService := berita.NewService(beritaRepository)
-	beritaHandler := handler.NewBeritaHandler(beritaService)
+	beritaHandler := handler.NewBeritaHandler(beritaService, statisticsService)
 
 	//barang
 	barangRepository := barang.NewRepository(db)
 	barangService := barang.NewService(barangRepository)
-	barangHandler := handler.NewBarangHandler(barangService)
+	barangHandler := handler.NewBarangHandler(barangService, statisticsService)
 
 	//photoTalk
 	photoTalkRepository := phototalk.NewRepository(db)
 	photoTalkService := phototalk.NewService(photoTalkRepository)
-	photoTalkHandler := handler.NewPhotoTalkHandler(photoTalkService)
+	photoTalkHandler := handler.NewPhotoTalkHandler(photoTalkService, statisticsService)
 
 	//KMPF
 	karyakmpfRepository := karyakmpf.NewRepository(db)
@@ -83,17 +89,17 @@ func main() {
 	//merch
 	merchRepository := merch.NewRepository(db)
 	merchService := merch.NewService(merchRepository)
-	merchHandler := handler.NewMerchHandler(merchService)
+	merchHandler := handler.NewMerchHandler(merchService, statisticsService)
 
 	//ShortVideo 
 	shortVideoRepository := shortvideo.NewRepository(db)
 	shortVideoService := shortvideo.NewService(shortVideoRepository)
-	shortVideoHandler := handler.NewShortVideoHandler(shortVideoService)
+	shortVideoHandler := handler.NewShortVideoHandler(shortVideoService, statisticsService)
 
 	//Artikel
 	artikelRepository := artikel.NewRepository(db)
 	artikelService := artikel.NewService(artikelRepository)
-	artikelHandler := handler.NewArtikelHandler(artikelService)
+	artikelHandler := handler.NewArtikelHandler(artikelService, statisticsService)
 
   router := gin.Default()
   router.Use(cors.New(cors.Config{
@@ -165,6 +171,9 @@ func main() {
 	apiArtikel.GET("/", artikelHandler.GetAllArtikel)
 	apiArtikel.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), artikelHandler.DeleteArtikel)
 	apiArtikel.GET("/:id", artikelHandler.GetOneArtikel)
+
+	// statistics
+	router.GET("/statistics", statisticsHandler.GetStatisticsHandler)
 
 	router.Run(":8080")
 

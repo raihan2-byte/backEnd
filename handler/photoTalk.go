@@ -1,6 +1,7 @@
 package handler
 
 import (
+	endpointcount "blog/endpointCount"
 	"blog/helper"
 	"blog/imagekits"
 	"blog/phototalk"
@@ -16,10 +17,11 @@ import (
 
 type photoTalkHandler struct {
 	photoTalkService phototalk.Service
+	endpointService endpointcount.StatisticsService
 }
 
-func NewPhotoTalkHandler(photoTalkService phototalk.Service) *photoTalkHandler {
-	return &photoTalkHandler{photoTalkService}
+func NewPhotoTalkHandler(photoTalkService phototalk.Service, endpointService endpointcount.StatisticsService) *photoTalkHandler {
+	return &photoTalkHandler{photoTalkService, endpointService}
 }
 
 func (h *photoTalkHandler) CreatePhotoTalk (c *gin.Context){
@@ -93,6 +95,16 @@ func (h *photoTalkHandler) GetAllPhotoTalk(c *gin.Context) {
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
+
+	userAgent := c.GetHeader("User-Agent")
+
+	err = h.endpointService.IncrementCount("View All PhotoTalk", userAgent)
+    if err != nil {
+        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+    }
+
 	response := helper.APIresponse(http.StatusOK, newBerita)
 	c.JSON(http.StatusOK, response)
 
@@ -119,6 +131,16 @@ func (h *photoTalkHandler) GetOnePhotoTalk(c *gin.Context) {
 		return
 		
 	}
+
+	userAgent := c.GetHeader("User-Agent")
+
+	err = h.endpointService.IncrementCount("View PhotoTalk", userAgent)
+    if err != nil {
+        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+    }
+
 	response := helper.APIresponse(http.StatusOK, newDel)
 	c.JSON(http.StatusOK, response)
 }

@@ -2,6 +2,7 @@ package handler
 
 import (
 	"blog/berita"
+	endpointcount "blog/endpointCount"
 	"blog/helper"
 	"blog/imagekits"
 	"bytes"
@@ -16,10 +17,11 @@ import (
 
 type beritaHandler struct {
 	beritaService berita.Service
+	endpointService endpointcount.StatisticsService
 }
 
-func NewBeritaHandler(beritaService berita.Service) *beritaHandler {
-	return &beritaHandler{beritaService}
+func NewBeritaHandler(beritaService berita.Service, endpointService endpointcount.StatisticsService) *beritaHandler {
+	return &beritaHandler{beritaService, endpointService}
 }
 
 func (h *beritaHandler) DeleteBerita(c *gin.Context){
@@ -97,6 +99,15 @@ func (h *beritaHandler) GetByTags (c *gin.Context){
 		return
 	}
 	
+	userAgent := c.GetHeader("User-Agent")
+
+	err = h.endpointService.IncrementCount("View News By Tags", userAgent)
+    if err != nil {
+        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+    }
+
 	response := helper.APIresponse(http.StatusOK, berita.FormatterGetBerita(barang))
 	c.JSON(http.StatusOK, response)
 
@@ -111,6 +122,15 @@ func (h *beritaHandler) GetByKarya(c *gin.Context){
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
+
+	userAgent := c.GetHeader("User-Agent")
+
+	err = h.endpointService.IncrementCount("View News By Karya", userAgent)
+    if err != nil {
+        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+    }
 	
 	response := helper.APIresponse(http.StatusOK, berita.FormatterGetBerita(barang))
 	c.JSON(http.StatusOK, response)
