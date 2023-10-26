@@ -53,3 +53,14 @@ func (h *StatisticsHandler) GetUniqueUserAgentsCountHandler(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"count": count})
 }
+
+func (h *StatisticsHandler) GetTotalUniqueUserAgentsHandler(c *gin.Context) {
+	// Di sini Anda dapat menggunakan service untuk mendapatkan total keseluruhan unique user agent
+	totalUniqueUserAgents, err := h.statisticsService.GetTotalUniqueUserAgents()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{"total_unique_user_agents": totalUniqueUserAgents})
+}
