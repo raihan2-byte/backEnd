@@ -17,6 +17,8 @@ func NewStatisticsHandler(statisticsService endpointcount.StatisticsService) *St
 	}
 }
 
+
+
 func (h *StatisticsHandler) IncrementCountHandler(c *gin.Context) {
 	endpoint := c.Request.URL.Path
 	userAgent := c.GetHeader("User-Agent")
