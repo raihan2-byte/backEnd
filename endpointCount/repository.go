@@ -8,6 +8,7 @@ type StatisticsRepository interface {
 	IncrementCount(endpoint string, useragent string) error
 	GetStatistics() ([]Statistics, error)
 	GetUniqueUserAgentsCount() (int, error)
+	GetTotalUniqueUserAgents() (int, error)
 }
 
 type statisticsRepository struct {
@@ -18,6 +19,16 @@ func NewStatisticsRepository(db *gorm.DB) StatisticsRepository {
 	return &statisticsRepository{
 		db: db,
 	}
+}
+
+
+func (r *statisticsRepository) GetTotalUniqueUserAgents() (int, error) {
+    var totalUniqueUserAgents int64
+    err := r.db.Model(&Statistics{}).Distinct("user_agent").Count(&totalUniqueUserAgents).Error
+    if err != nil {
+        return 0, err
+    }
+    return int(totalUniqueUserAgents), nil
 }
 
 func (r *statisticsRepository) IncrementCount(endpoint string, useragent string) error {
@@ -37,6 +48,8 @@ func (r *statisticsRepository) IncrementCount(endpoint string, useragent string)
 
 	statistics.Count++
 	statistics.UserAgent = useragent
+	statistics.TotalCount++
+
 	// statistics.UniqueUserAgent = uniqueUserAgentCount
 
 	err = r.db.Save(&statistics).Error

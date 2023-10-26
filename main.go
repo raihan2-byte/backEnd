@@ -48,6 +48,8 @@ func main() {
 		log.Fatal("DB Connection Error")
 	}
 
+	
+
 	err = db.AutoMigrate(&user.User{}, &endpointcount.Statistics{}, &berita.Berita{}, &barang.Barang{}, &phototalk.PhotoTalk{}, &karyakmpf.KMPF{}, &merch.Merch{}, &barang.Category{}, &berita.TagsBerita{}, &shortvideo.ShortVideo{}, &berita.KaryaBerita{}, &artikel.Artikel{}, &berita.BeritaImage{})
 	if err != nil {
 		log.Fatal("eror migration")
@@ -174,6 +176,8 @@ func main() {
 
 	// statistics
 	router.GET("/statistics", statisticsHandler.GetStatisticsHandler)
+	router.GET("/total-unique-user-agents", statisticsHandler.GetTotalUniqueUserAgentsHandler)
+
 
 	router.Run(":8080")
 

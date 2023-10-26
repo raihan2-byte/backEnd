@@ -4,6 +4,7 @@ type StatisticsService interface {
 	IncrementCount(endpoint string, useragent string) error
 	GetStatistics() ([]Statistics, error)
 	GetUniqueUserAgentsCount() (int, error)
+	GetTotalUniqueUserAgents() (int, error)
 }
 
 type statisticsService struct {
@@ -14,6 +15,14 @@ func NewStatisticsService(statisticsRepository StatisticsRepository) StatisticsS
 	return &statisticsService{
 		statisticsRepository: statisticsRepository,
 	}
+}
+
+func (s *statisticsService) GetTotalUniqueUserAgents() (int, error) {
+	totalUniqueUserAgents, err := s.statisticsRepository.GetTotalUniqueUserAgents()
+	if err != nil {
+		return 0, err
+	}
+	return totalUniqueUserAgents, nil
 }
 
 func (s *statisticsService) IncrementCount(endpoint string, useragent string) error {

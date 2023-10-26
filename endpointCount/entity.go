@@ -10,5 +10,7 @@ type Statistics struct {
 	Count     int
 	UserAgent string 
 	UniqueUserAgent int
+	TotalUniqueUserAgents int
+	TotalCount      int
 }
 
