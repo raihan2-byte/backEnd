@@ -48,7 +48,6 @@ func (r *statisticsRepository) IncrementCount(endpoint string, useragent string)
 
 	statistics.Count++
 	statistics.UserAgent = useragent
-
 	// statistics.UniqueUserAgent = uniqueUserAgentCount
 
 	err = r.db.Save(&statistics).Error
