@@ -7,5 +7,5 @@ type TagLineHome struct {
 	Heading   string
 	Text      string
 	CreatedAt time.Time
-	UpdatesAt time.Time
+	UpdatedAt time.Time
 }
