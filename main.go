@@ -8,6 +8,7 @@ import (
 	endpointcount "blog/endpointCount"
 	"blog/handler"
 	"blog/helper"
+	"blog/home"
 	"blog/karyakmpf"
 	"blog/merch"
 	"blog/phototalk"
@@ -47,8 +48,6 @@ func main() {
 	if err != nil {
 		log.Fatal("DB Connection Error")
 	}
-
-	
 
 	err = db.AutoMigrate(&user.User{}, &endpointcount.Statistics{}, &berita.Berita{}, &barang.Barang{}, &phototalk.PhotoTalk{}, &karyakmpf.KMPF{}, &merch.Merch{}, &barang.Category{}, &berita.TagsBerita{}, &shortvideo.ShortVideo{}, &berita.KaryaBerita{}, &artikel.Artikel{}, &berita.BeritaImage{})
 	if err != nil {
@@ -102,6 +101,10 @@ func main() {
 	artikelRepository := artikel.NewRepository(db)
 	artikelService := artikel.NewService(artikelRepository)
 	artikelHandler := handler.NewArtikelHandler(artikelService, statisticsService)
+
+	homeRepository := home.NewRepository(db)
+	homeService := home.NewService(homeRepository)
+	homeHandler := handler.NewHomeHandler(homeService, statisticsService)
 
   router := gin.Default()
   router.Use(cors.New(cors.Config{
@@ -173,6 +176,14 @@ func main() {
 	apiArtikel.GET("/", artikelHandler.GetAllArtikel)
 	apiArtikel.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), artikelHandler.DeleteArtikel)
 	apiArtikel.GET("/:id", artikelHandler.GetOneArtikel)
+
+	apiHome := router.Group("/tagLine")
+	apiHome.POST("/", authMiddleware(authService, userService), authRole(authService, userService), homeHandler.CreateTagHome)
+	apiHome.GET("/", homeHandler.GetAllTagHome)
+	apiHome.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), homeHandler.DeleteHome)
+	apiHome.PUT("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), homeHandler.UpdateTagHome)
+
+	// apiHome.GET("/:id", homeHandler.GetAllTagHome)
 
 	// statistics
 	router.GET("/statistics", statisticsHandler.GetStatisticsHandler)

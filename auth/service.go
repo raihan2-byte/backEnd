@@ -9,10 +9,7 @@ import (
 type Service interface {
 	GenerateToken(userID int, role int) (string, error)
 	ValidasiToken(token string) (*jwt.Token, error)
-	// Refresh(refreshPayload string) (string, error)
-	// PhotoAuthorization() gin.HandlerFunc
-	// CommentAuthorization() gin.HandlerFunc
-	// SosmedAuthorization() gin.HandlerFunc
+	
 }
 
 type jwtService struct {

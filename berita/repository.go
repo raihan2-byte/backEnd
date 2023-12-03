@@ -44,11 +44,8 @@ func (r *repository) Save(berita Berita) (Berita, error) {
 
 func (r *repository) CreateImage(berita BeritaImage) (error) {
 	err := r.db.Create(&berita).Error
-
-	// if err != nil {
 		return  err
-	// }
-	// return berita, nil
+	
 }
 
 
