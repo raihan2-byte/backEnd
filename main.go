@@ -49,7 +49,7 @@ func main() {
 		log.Fatal("DB Connection Error")
 	}
 
-	err = db.AutoMigrate(&user.User{}, &endpointcount.Statistics{}, &berita.Berita{}, &barang.Barang{}, &phototalk.PhotoTalk{}, &karyakmpf.KMPF{}, &merch.Merch{}, &barang.Category{}, &berita.TagsBerita{}, &shortvideo.ShortVideo{}, &berita.KaryaBerita{}, &artikel.Artikel{}, &berita.BeritaImage{})
+	err = db.AutoMigrate(&home.TagLineHome{} ,&user.User{}, &endpointcount.Statistics{}, &berita.Berita{}, &barang.Barang{}, &phototalk.PhotoTalk{}, &karyakmpf.KMPF{}, &merch.Merch{}, &barang.Category{}, &berita.TagsBerita{}, &shortvideo.ShortVideo{}, &berita.KaryaBerita{}, &artikel.Artikel{}, &berita.BeritaImage{})
 	if err != nil {
 		log.Fatal("eror migration")
 	}
@@ -184,6 +184,7 @@ func main() {
 	apiHome.PUT("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), homeHandler.UpdateTagHome)
 
 	// apiHome.GET("/:id", homeHandler.GetAllTagHome)
+
 
 	// statistics
 	router.GET("/statistics", statisticsHandler.GetStatisticsHandler)
