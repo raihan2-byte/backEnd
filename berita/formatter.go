@@ -5,6 +5,7 @@ import "time"
 type BeritaStructFormatter struct {
 	ID            int         `json:"id"`
 	Judul string      `json:"judul"`
+	Slug string `json:"slug"`
 	BeritaMessage string      `json:"berita_message"`
 	TagsID        int         `json:"tags_id"`
 	KaryaNewsID   *int        `json:"karya_news_id"`
@@ -36,6 +37,7 @@ func FormatterBerita (berita Berita) BeritaStructFormatter{
 	formatter := BeritaStructFormatter{
 		ID: berita.ID,
 		Judul: berita.JudulBerita,
+		Slug: berita.Slug,
 		BeritaMessage: berita.BeritaMessage,
 		FileName: make([]string, len(berita.FileName)),
 		TagsID: berita.TagsID,
@@ -82,6 +84,7 @@ func FormatterGetBerita(berita []Berita) []BeritaStructFormatter {
 type BeritaSingleFormatter struct {
     ID            int         `json:"id"`
     Judul         string      `json:"judul"`
+	Slug string `json:"slug"`
     BeritaMessage string      `json:"berita_message"`
     TagsID        int         `json:"tags_id"`
     KaryaNewsID   *int        `json:"karya_news_id"`
@@ -96,6 +99,7 @@ func FormatterOneBerita(berita Berita) BeritaSingleFormatter {
     formatter := BeritaSingleFormatter{
         ID:            berita.ID,
         Judul:         berita.JudulBerita,
+		Slug: berita.Slug,
         BeritaMessage: berita.BeritaMessage,
         FileNames:     make([]string, len(berita.FileName)),
         TagsID:        berita.TagsID,
