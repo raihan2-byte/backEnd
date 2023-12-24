@@ -1,10 +1,19 @@
 package berita
 
+import (
+	"fmt"
+	"math/rand"
+	"strings"
+	"time"
+
+	"github.com/gosimple/slug"
+)
+
 type Service interface {
 	CreateBerita(input CreateBerita) (Berita, error)
 	GetAllBerita(input int) ([]Berita, error)
 	DeleteBerita(ID int) error
-	GetOneBerita(ID int) (Berita, error)
+	GetOneBerita(slug string) (Berita, error)
 	FindByTags(ID int) ([]Berita, error)
 	CreateBeritaImage(BeritaID int, FileName string) error
 	FindByKarya() ([]Berita, error)
@@ -45,14 +54,25 @@ func (s *service) UpdateBerita(GetIdBerita GetBerita, input CreateBerita) (Berit
 	berita.TagsID = input.TagsID
 	berita.KaryaNewsID = input.KaryaNewsID
 
+	oldSlug := berita.Slug
+	var seededRand *rand.Rand = rand.New(rand.NewSource(time.Now().UnixNano()))
+	slugTitle := strings.ToLower(input.JudulBerita)
+	mySlug := slug.Make(slugTitle)
+	randomNumber := seededRand.Intn(1000000) // Angka acak 0-999999
+	berita.Slug = fmt.Sprintf("%s-%d", mySlug, randomNumber)
+
+	// Ubah nilai slug kembali ke nilai slug lama untuk mencegah perubahan slug dalam database
+	berita.Slug = oldSlug
+
 	newBerita, err := s.repository.Update(berita)
 	if err != nil {
 		return newBerita, err
 	}
 	return newBerita, nil
 }
-func (s *service) GetOneBerita(ID int) (Berita, error) {
-	berita, err := s.repository.FindById(ID)
+
+func (s *service) GetOneBerita(slug string) (Berita, error) {
+	berita, err := s.repository.FindBySlug(slug)
 	if err != nil {
 		return berita, err
 	}
@@ -95,17 +115,28 @@ func (s *service) GetAllBerita(input int) ([]Berita, error) {
 
 func (s *service) CreateBerita(input CreateBerita) (Berita, error) {
 	createBerita := Berita{}
-
 	createBerita.JudulBerita = input.JudulBerita
 	createBerita.BeritaMessage = input.BeritaMessage
 	createBerita.TagsID = input.TagsID
 	createBerita.KaryaNewsID = input.KaryaNewsID
+
+	var seededRand *rand.Rand = rand.New(
+		rand.NewSource(time.Now().UnixNano()))
+
+	slugTitle := strings.ToLower(createBerita.JudulBerita)
+
+	mySlug := slug.Make(slugTitle)
+
+	randomNumber := seededRand.Intn(1000000) // Angka acak 0-999999
+
+	createBerita.Slug = fmt.Sprintf("%s-%d", mySlug, randomNumber)
 
 	newBerita, err := s.repository.Save(createBerita)
 	if err != nil {
 		return newBerita, err
 	}
 	return newBerita, nil
+
 }
 
 func (s *service) FindByTags(ID int) ([]Berita, error) {

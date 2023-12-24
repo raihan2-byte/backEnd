@@ -79,3 +79,15 @@ func (r *statisticsRepository) GetUniqueUserAgentsCount() (int, error) {
 
 	return int(count), nil
 }
+
+func (r *statisticsRepository) GetTotalCountByEndpoint(endpoint string) (int64, error) {
+	var totalCount int64
+
+	result := r.db.Model(&Statistics{}).Where("endpoint = ?", endpoint).Select("SUM(count)").Row()
+	err := result.Scan(&totalCount)
+	if err != nil {
+		return 0, err
+	}
+
+	return totalCount, nil
+}

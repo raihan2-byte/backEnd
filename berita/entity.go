@@ -6,6 +6,7 @@ type Berita struct {
 	ID int
 	JudulBerita string
 	BeritaMessage string
+	Slug string
 	TagsID int
 	KaryaNewsID *int 
 	CreatedAt  time.Time

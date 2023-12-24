@@ -1,6 +1,10 @@
 package berita
 
-import "gorm.io/gorm"
+import (
+	"errors"
+
+	"gorm.io/gorm"
+)
 
 type Repository interface {
 	//create User
@@ -8,6 +12,7 @@ type Repository interface {
 	CreateImage(berita BeritaImage) (error)
 	FindById(ID int) (Berita, error)
 	FindAll() ([]Berita, error)
+	FindBySlug(slug string) (Berita, error)
 	FindByKarya(ID []int) ([]Berita, error)
 	FindByTags(tags int) ([]Berita, error)
 	Update(berita Berita) (Berita, error)
@@ -21,6 +26,22 @@ type repository struct {
 
 func NewRepository(db *gorm.DB) *repository {
 	return &repository{db}
+}
+
+func (r *repository) FindBySlug(slug string) (Berita, error) {
+	var ecopedia Berita
+
+	err := r.db.Where("slug = ?", slug).Preload("FileName").Find(&ecopedia).Error
+
+	if err != nil {
+		return ecopedia, err
+	}
+	if ecopedia.Slug == "" {
+        return ecopedia, errors.New("slug not found")
+    }
+	
+	return ecopedia, nil
+
 }
 
 func (r *repository) FindAll()([]Berita, error){

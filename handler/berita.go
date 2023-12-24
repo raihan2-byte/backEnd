@@ -53,18 +53,9 @@ func (h *beritaHandler) DeleteBerita(c *gin.Context){
 }
 
 func (h *beritaHandler) GetOneBerita(c *gin.Context){
-	var input berita.GetBerita
+	param := c.Param("slug")
 
-	err := c.ShouldBindUri(&input)
-	if err != nil {
-		errors := helper.FormatValidationError(err)
-		errorMessage := gin.H{"errors": errors}
-		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-	}
-
-	newDel, err := h.beritaService.GetOneBerita(input.ID)
+	newDel, err := h.beritaService.GetOneBerita(param)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
