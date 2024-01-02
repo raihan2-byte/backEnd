@@ -97,9 +97,9 @@ func (h *merchHandler) GetAllMerch(c *gin.Context) {
 		return
 	}
 
-	userAgent := c.GetHeader("User-Agent")
+	// userAgent := c.GetHeader("User-Agent")
 
-	err = h.endpointService.IncrementCount("View All Merch", userAgent)
+	err = h.endpointService.IncrementCount("View-All-Merch")
     if err != nil {
         response := helper.APIresponse(http.StatusUnprocessableEntity, err)
 		c.JSON(http.StatusUnprocessableEntity, response)
@@ -134,9 +134,9 @@ func (h *merchHandler) GetOneMerch(c *gin.Context) {
 		
 	}
 
-	userAgent := c.GetHeader("User-Agent")
+	// userAgent := c.GetHeader("User-Agent")
 
-	err = h.endpointService.IncrementCount("View Merch", userAgent)
+	err = h.endpointService.IncrementCount("View-Merch")
     if err != nil {
         response := helper.APIresponse(http.StatusUnprocessableEntity, err)
 		c.JSON(http.StatusUnprocessableEntity, response)

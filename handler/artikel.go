@@ -72,9 +72,9 @@ func (h *artikelHandler) GetOneArtikel(c *gin.Context) {
 
 	}
 
-	userAgent := c.GetHeader("User-Agent")
+	// userAgent := c.GetHeader("User-Agent")
 
-	err = h.endpointService.IncrementCount("View Article", userAgent)
+	err = h.endpointService.IncrementCount("View-Article")
     if err != nil {
         response := helper.APIresponse(http.StatusUnprocessableEntity, err)
 		c.JSON(http.StatusUnprocessableEntity, response)
@@ -160,9 +160,9 @@ func (h *artikelHandler) GetAllArtikel(c *gin.Context){
 		return
 	}
 
-	userAgent := c.GetHeader("User-Agent")
+	// userAgent := c.GetHeader("User-Agent")
 
-	err = h.endpointService.IncrementCount("View All Article", userAgent)
+	err = h.endpointService.IncrementCount("All-Article")
     if err != nil {
         response := helper.APIresponse(http.StatusUnprocessableEntity, err)
 		c.JSON(http.StatusUnprocessableEntity, response)

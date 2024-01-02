@@ -96,9 +96,9 @@ func (h *photoTalkHandler) GetAllPhotoTalk(c *gin.Context) {
 		return
 	}
 
-	userAgent := c.GetHeader("User-Agent")
+	// userAgent := c.GetHeader("User-Agent")
 
-	err = h.endpointService.IncrementCount("View All PhotoTalk", userAgent)
+	err = h.endpointService.IncrementCount("View-All-PhotoTalk")
     if err != nil {
         response := helper.APIresponse(http.StatusUnprocessableEntity, err)
 		c.JSON(http.StatusUnprocessableEntity, response)
@@ -132,9 +132,9 @@ func (h *photoTalkHandler) GetOnePhotoTalk(c *gin.Context) {
 		
 	}
 
-	userAgent := c.GetHeader("User-Agent")
+	// userAgent := c.GetHeader("User-Agent")
 
-	err = h.endpointService.IncrementCount("View PhotoTalk", userAgent)
+	err = h.endpointService.IncrementCount("View-PhotoTalk")
     if err != nil {
         response := helper.APIresponse(http.StatusUnprocessableEntity, err)
 		c.JSON(http.StatusUnprocessableEntity, response)

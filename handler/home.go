@@ -107,9 +107,7 @@ func (h *homeHandler) GetAllTagHome(c *gin.Context) {
 		return
 	}
 
-	userAgent := c.GetHeader("User-Agent")
-
-	err = h.endpointService.IncrementCount("View All Tag Home", userAgent)
+	err = h.endpointService.IncrementCount("View-Site")
 	if err != nil {
 		response := helper.APIresponse(http.StatusUnprocessableEntity, err)
 		c.JSON(http.StatusUnprocessableEntity, response)

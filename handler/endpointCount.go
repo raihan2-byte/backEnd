@@ -17,17 +17,15 @@ func NewStatisticsHandler(statisticsService endpointcount.StatisticsService) *St
 	}
 }
 
-
-
 func (h *StatisticsHandler) IncrementCountHandler(c *gin.Context) {
 	endpoint := c.Request.URL.Path
-	userAgent := c.GetHeader("User-Agent")
+	// userAgent := c.GetHeader("User-Agent")
 
 
-	err := h.statisticsService.IncrementCount(endpoint, userAgent)
+	err := h.statisticsService.IncrementCount(endpoint)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to increment count"})
-		return
+		return	
 	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Count incremented"})
@@ -43,24 +41,17 @@ func (h *StatisticsHandler) GetStatisticsHandler(c *gin.Context) {
 	c.JSON(http.StatusOK, endpointcount.FormatterGet(statistics))
 }
 
+func (h *StatisticsHandler) GetTotalCountForEndpointHandler(c *gin.Context) {
+    endpoint := c.Param("endpoint") // Misalkan endpoint diambil dari parameter
 
-func (h *StatisticsHandler) GetUniqueUserAgentsCountHandler(c *gin.Context) {
-	count, err := h.statisticsService.GetUniqueUserAgentsCount()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve unique user agents count"})
-		return
-	}
+    totalCount, err := h.statisticsService.GetTotalCountForEndpoint(endpoint)
+    if err != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to retrieve total count for endpoint"})
+        return
+    }
 
-	c.JSON(http.StatusOK, gin.H{"count": count})
+    c.JSON(http.StatusOK, gin.H{"totalCount": totalCount})
 }
 
-func (h *StatisticsHandler) GetTotalUniqueUserAgentsHandler(c *gin.Context) {
-	// Di sini Anda dapat menggunakan service untuk mendapatkan total keseluruhan unique user agent
-	totalUniqueUserAgents, err := h.statisticsService.GetTotalUniqueUserAgents()
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
-		return
-	}
 
-	c.JSON(http.StatusOK, gin.H{"total_unique_user_agents": totalUniqueUserAgents})
-}
+

@@ -1,10 +1,9 @@
 package endpointcount
 
 type StatisticsService interface {
-	IncrementCount(endpoint string, useragent string) error
+	IncrementCount(endpoint string) error
 	GetStatistics() ([]Statistics, error)
-	GetUniqueUserAgentsCount() (int, error)
-	GetTotalUniqueUserAgents() (int, error)
+	GetTotalCountForEndpoint(endpoint string) (int, error)
 }
 
 type statisticsService struct {
@@ -17,16 +16,8 @@ func NewStatisticsService(statisticsRepository StatisticsRepository) StatisticsS
 	}
 }
 
-func (s *statisticsService) GetTotalUniqueUserAgents() (int, error) {
-	totalUniqueUserAgents, err := s.statisticsRepository.GetTotalUniqueUserAgents()
-	if err != nil {
-		return 0, err
-	}
-	return totalUniqueUserAgents, nil
-}
-
-func (s *statisticsService) IncrementCount(endpoint string, useragent string) error {
-	err := s.statisticsRepository.IncrementCount(endpoint, useragent)
+func (s *statisticsService) IncrementCount(endpoint string) error {
+	err := s.statisticsRepository.IncrementCount(endpoint)
 	if err != nil {
 		return err
 	}
@@ -43,11 +34,11 @@ func (s *statisticsService) GetStatistics() ([]Statistics, error) {
 	return statistics, nil
 }
 
-func (s *statisticsService) GetUniqueUserAgentsCount() (int, error) {
-	count, err := s.statisticsRepository.GetUniqueUserAgentsCount()
+func (s *statisticsService) GetTotalCountForEndpoint(endpoint string) (int, error) {
+	totalCount, err := s.statisticsRepository.GetTotalCountForEndpoint(endpoint)
 	if err != nil {
 		return 0, err
 	}
 
-	return count, nil
+	return totalCount, nil
 }

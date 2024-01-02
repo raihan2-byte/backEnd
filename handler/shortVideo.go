@@ -97,9 +97,9 @@ func (h *shortVideoHandler) GetAllShortVideo(c *gin.Context) {
 		return
 	}
 
-	userAgent := c.GetHeader("User-Agent")
+	// userAgent := c.GetHeader("User-Agent")
 
-	err = h.endpointService.IncrementCount("View All Short Video", userAgent)
+	err = h.endpointService.IncrementCount("View-All-Short-Video")
     if err != nil {
         response := helper.APIresponse(http.StatusUnprocessableEntity, err)
 		c.JSON(http.StatusUnprocessableEntity, response)
@@ -133,9 +133,9 @@ func (h *shortVideoHandler) GetOneShortVideo(c *gin.Context) {
 
 	}
 
-	userAgent := c.GetHeader("User-Agent")
+	// userAgent := c.GetHeader("User-Agent")
 
-	err = h.endpointService.IncrementCount("View Short Video", userAgent)
+	err = h.endpointService.IncrementCount("View-Short-Video")
     if err != nil {
         response := helper.APIresponse(http.StatusUnprocessableEntity, err)
 		c.JSON(http.StatusUnprocessableEntity, response)

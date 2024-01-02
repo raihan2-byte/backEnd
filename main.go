@@ -188,7 +188,7 @@ func main() {
 
 	// statistics
 	router.GET("/statistics", statisticsHandler.GetStatisticsHandler)
-	router.GET("/total-unique-user-agents", statisticsHandler.GetTotalUniqueUserAgentsHandler)
+	router.GET("/statistics/:endpoint", statisticsHandler.GetTotalCountForEndpointHandler)
 
 
 	router.Run(":8080")

@@ -98,9 +98,9 @@ func (h *barangHandler) GetAllBarang (c *gin.Context){
 		return
 	}
 
-	userAgent := c.GetHeader("User-Agent")
+	// userAgent := c.GetHeader("User-Agent")
 
-	err = h.endpointService.IncrementCount("View All Rent", userAgent)
+	err = h.endpointService.IncrementCount("View-All-Rent")
     if err != nil {
         response := helper.APIresponse(http.StatusUnprocessableEntity, err)
 		c.JSON(http.StatusUnprocessableEntity, response)
@@ -132,9 +132,9 @@ func (h *barangHandler) GetOneBarang (c *gin.Context){
 		return
 	}
 
-	userAgent := c.GetHeader("User-Agent")
+	// userAgent := c.GetHeader("User-Agent")
 
-	err = h.endpointService.IncrementCount("View Rent", userAgent)
+	err = h.endpointService.IncrementCount("View-Rent")
     if err != nil {
         response := helper.APIresponse(http.StatusUnprocessableEntity, err)
 		c.JSON(http.StatusUnprocessableEntity, response)
