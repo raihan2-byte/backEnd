@@ -162,7 +162,7 @@ func (h *artikelHandler) GetAllArtikel(c *gin.Context){
 
 	// userAgent := c.GetHeader("User-Agent")
 
-	err = h.endpointService.IncrementCount("All-Article")
+	err = h.endpointService.IncrementCount("View-All-Article")
     if err != nil {
         response := helper.APIresponse(http.StatusUnprocessableEntity, err)
 		c.JSON(http.StatusUnprocessableEntity, response)
