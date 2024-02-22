@@ -27,9 +27,7 @@ import (
 	"gorm.io/gorm"
 )
 
-
 func main() {
-
 	if _, exists := os.LookupEnv("RAILWAY_ENVIRONMENT"); exists == false {
 		if err := godotenv.Load(); err != nil {
 			log.Fatal("error loading .env file:", err)
@@ -49,7 +47,7 @@ func main() {
 		log.Fatal("DB Connection Error")
 	}
 
-	err = db.AutoMigrate(&home.TagLineHome{} ,&user.User{}, &endpointcount.Statistics{}, &berita.Berita{}, &barang.Barang{}, &phototalk.PhotoTalk{}, &karyakmpf.KMPF{}, &merch.Merch{}, &barang.Category{}, &berita.TagsBerita{}, &shortvideo.ShortVideo{}, &berita.KaryaBerita{}, &artikel.Artikel{}, &berita.BeritaImage{})
+	err = db.AutoMigrate(&home.TagLineHome{}, &user.User{}, &endpointcount.Statistics{}, &berita.Berita{}, &barang.Barang{}, &phototalk.PhotoTalk{}, &karyakmpf.KMPF{}, &merch.Merch{}, &barang.Category{}, &berita.TagsBerita{}, &shortvideo.ShortVideo{}, &berita.KaryaBerita{}, &artikel.Artikel{}, &berita.BeritaImage{})
 	if err != nil {
 		log.Fatal("eror migration")
 	}
@@ -92,7 +90,7 @@ func main() {
 	merchService := merch.NewService(merchRepository)
 	merchHandler := handler.NewMerchHandler(merchService, statisticsService)
 
-	//ShortVideo 
+	//ShortVideo
 	shortVideoRepository := shortvideo.NewRepository(db)
 	shortVideoService := shortvideo.NewService(shortVideoRepository)
 	shortVideoHandler := handler.NewShortVideoHandler(shortVideoService, statisticsService)
@@ -106,12 +104,12 @@ func main() {
 	homeService := home.NewService(homeRepository)
 	homeHandler := handler.NewHomeHandler(homeService, statisticsService)
 
-  router := gin.Default()
-  router.Use(cors.New(cors.Config{
-	AllowAllOrigins: true,
-	AllowHeaders: []string{"Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Access-Control-Allow-Origin , Origin , Accept , X-Requested-With , Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization"},
-	AllowMethods: []string{"POST, OPTIONS, GET, PUT, DELETE"},
-  }))
+	router := gin.Default()
+	router.Use(cors.New(cors.Config{
+		AllowAllOrigins: true,
+		AllowHeaders:    []string{"Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Access-Control-Allow-Origin , Origin , Accept , X-Requested-With , Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization"},
+		AllowMethods:    []string{"POST, OPTIONS, GET, PUT, DELETE"},
+	}))
 
 	//user
 	api := router.Group("/users")
@@ -123,7 +121,7 @@ func main() {
 
 	//berita
 	apiBerita := router.Group("/berita")
-	apiBerita.POST("/", authMiddleware(authService, userService), authRole(authService, userService),  beritaHandler.CreateBerita)
+	apiBerita.POST("/", authMiddleware(authService, userService), authRole(authService, userService), beritaHandler.CreateBerita)
 	apiBerita.GET("/", beritaHandler.GetAllBerita)
 	apiBerita.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), beritaHandler.DeleteBerita)
 	apiBerita.PUT("update/:id", authMiddleware(authService, userService), authRole(authService, userService), beritaHandler.UpdateBerita)
@@ -131,22 +129,20 @@ func main() {
 	apiBerita.GET("/tags/:id", beritaHandler.GetByTags)
 	apiBerita.GET("/karya", beritaHandler.GetByKarya)
 
-	
 	//barang
 	apiBarang := router.Group("/barang")
 	apiBarang.POST("/", authMiddleware(authService, userService), authRole(authService, userService), barangHandler.CreateBarang)
 	apiBarang.GET("/", barangHandler.GetAllBarang)
-	apiBarang.DELETE("/delete/:id", authMiddleware(authService, userService) , authRole(authService, userService), barangHandler.DeleteBarang)
+	apiBarang.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), barangHandler.DeleteBarang)
 	apiBarang.PUT("update/:id", authMiddleware(authService, userService), authRole(authService, userService), barangHandler.UpdateBarang)
 	apiBarang.GET("/:id", barangHandler.GetOneBarang)
-	apiBarang.GET("/category/:id",barangHandler.GetCategoryBarang)
-
+	apiBarang.GET("/category/:id", barangHandler.GetCategoryBarang)
 
 	//photoTalk
 	apiPhotoTalk := router.Group("/phototalk")
 	apiPhotoTalk.POST("/", authMiddleware(authService, userService), authRole(authService, userService), photoTalkHandler.CreatePhotoTalk)
 	apiPhotoTalk.GET("/", photoTalkHandler.GetAllPhotoTalk)
-	apiPhotoTalk.DELETE("/delete/:id", authMiddleware(authService, userService) , authRole(authService, userService), photoTalkHandler.DeletePhotoTalk)
+	apiPhotoTalk.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), photoTalkHandler.DeletePhotoTalk)
 	apiPhotoTalk.GET("/:id", photoTalkHandler.GetOnePhotoTalk)
 
 	//karyakmpf
@@ -161,7 +157,7 @@ func main() {
 	apimerch.POST("/", authMiddleware(authService, userService), authRole(authService, userService), merchHandler.CreateMerch)
 	apimerch.GET("/", merchHandler.GetAllMerch)
 	apimerch.DELETE("/delete/:id", authMiddleware(authService, userService), authRole(authService, userService), merchHandler.DeleteMerch)
-	apimerch.GET("/:id",  merchHandler.GetOneMerch)
+	apimerch.GET("/:id", merchHandler.GetOneMerch)
 
 	//ShortVideo
 	apiShortVideo := router.Group("/short-video")
@@ -185,22 +181,19 @@ func main() {
 
 	// apiHome.GET("/:id", homeHandler.GetAllTagHome)
 
-
 	// statistics
 	router.GET("/statistics", statisticsHandler.GetStatisticsHandler)
 	router.GET("/statistics/:endpoint", statisticsHandler.GetTotalCountForEndpointHandler)
-
 
 	router.Run(":8080")
 
 }
 
-
 func authMiddleware(authService auth.Service, userService user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		authHeader := c.GetHeader("Authorization")
 		// fmt.Println(authHeader)
- 		if !strings.Contains(authHeader, "Bearer") {
+		if !strings.Contains(authHeader, "Bearer") {
 			response := helper.APIresponse(http.StatusUnauthorized, nil)
 			c.AbortWithStatusJSON(http.StatusUnauthorized, response)
 			return
@@ -238,9 +231,6 @@ func authMiddleware(authService auth.Service, userService user.Service) gin.Hand
 		c.Set("currentUser", user)
 	}
 }
-
-
-
 
 func authRole(authService auth.Service, userService user.Service) gin.HandlerFunc {
 	return func(c *gin.Context) {
