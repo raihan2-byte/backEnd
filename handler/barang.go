@@ -16,7 +16,7 @@ import (
 )
 
 type barangHandler struct {
-	barangService barang.Service
+	barangService   barang.Service
 	endpointService endpointcount.StatisticsService
 }
 
@@ -24,26 +24,31 @@ func NewBarangHandler(barangService barang.Service, endpointService endpointcoun
 	return &barangHandler{barangService, endpointService}
 }
 
-func (h *barangHandler) CreateBarang(c *gin.Context){
+func (h *barangHandler) CreateBarang(c *gin.Context) {
 	file, _ := c.FormFile("file")
-	src,err:=file.Open()
-	defer	src.Close()
-	if err!=nil{
-		fmt.Printf("error when open file %v",err)
+	src, err := file.Open()
+	if err != nil {
+		response := helper.APIresponse(http.StatusInternalServerError, "Failed to open file")
+		c.JSON(http.StatusInternalServerError, response)
+		return
 	}
-	
-	buf:=bytes.NewBuffer(nil)
+	defer src.Close()
+	if err != nil {
+		fmt.Printf("error when open file %v", err)
+	}
+
+	buf := bytes.NewBuffer(nil)
 	if _, err := io.Copy(buf, src); err != nil {
-		fmt.Printf("error read file %v",err)
-		return 
-	}	
-
-	img,err:=imagekits.Base64toEncode(buf.Bytes())
-	if err!=nil{
-		fmt.Println("error reading image %v",err)
+		fmt.Printf("error read file %v", err)
+		return
 	}
 
-	fmt.Println("image base 64 format : %v",img)
+	img, err := imagekits.Base64toEncode(buf.Bytes())
+	if err != nil {
+		fmt.Println("error reading image %v", err)
+	}
+
+	fmt.Println("image base 64 format : %v", img)
 
 	imageKitURL, err := imagekits.ImageKit(context.Background(), img)
 	if err != nil {
@@ -86,7 +91,7 @@ func (h *barangHandler) CreateBarang(c *gin.Context){
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *barangHandler) GetAllBarang (c *gin.Context){
+func (h *barangHandler) GetAllBarang(c *gin.Context) {
 	input, _ := strconv.Atoi(c.Query("id"))
 
 	data, err := h.barangService.GetAllBarang(input)
@@ -100,18 +105,18 @@ func (h *barangHandler) GetAllBarang (c *gin.Context){
 
 	// userAgent := c.GetHeader("User-Agent")
 
-	err = h.endpointService.IncrementCount("View-All-Rent")
-    if err != nil {
-        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-    }
+	// err = h.endpointService.IncrementCount("View-All-Rent")
+	// if err != nil {
+	//     response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+	// 	c.JSON(http.StatusUnprocessableEntity, response)
+	// 	return
+	// }
 
 	response := helper.APIresponse(http.StatusOK, barang.FormatterGetCategory(data))
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *barangHandler) GetOneBarang (c *gin.Context){
+func (h *barangHandler) GetOneBarang(c *gin.Context) {
 	var input barang.GetBarang
 
 	err := c.ShouldBindUri(&input)
@@ -134,44 +139,44 @@ func (h *barangHandler) GetOneBarang (c *gin.Context){
 
 	// userAgent := c.GetHeader("User-Agent")
 
-	err = h.endpointService.IncrementCount("View-Rent")
-    if err != nil {
-        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-    }
+	// err = h.endpointService.IncrementCount("View-Rent")
+	// if err != nil {
+	//     response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+	// 	c.JSON(http.StatusUnprocessableEntity, response)
+	// 	return
+	// }
 
 	response := helper.APIresponse(http.StatusOK, barang.FormatterBarang(data))
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *barangHandler) UpdateBarang (c *gin.Context){
+func (h *barangHandler) UpdateBarang(c *gin.Context) {
 
 	file, err := c.FormFile("file")
 	if err != nil {
 		fmt.Printf("error when open file: %v", err)
 		return
 	}
-	
+
 	src, err := file.Open()
 	if err != nil {
 		fmt.Printf("error when open file: %v", err)
 		return
 	}
 	defer src.Close()
-	
-	buf:=bytes.NewBuffer(nil)
-	if _, err := io.Copy(buf, src); err != nil {
-		fmt.Printf("error read file %v",err)
-		return 
-	}	
 
-	img,err:=imagekits.Base64toEncode(buf.Bytes())
-	if err!=nil{
-		fmt.Println("error reading image %v",err)
+	buf := bytes.NewBuffer(nil)
+	if _, err := io.Copy(buf, src); err != nil {
+		fmt.Printf("error read file %v", err)
+		return
 	}
 
-	fmt.Println("image base 64 format : %v",img)
+	img, err := imagekits.Base64toEncode(buf.Bytes())
+	if err != nil {
+		fmt.Println("error reading image %v", err)
+	}
+
+	fmt.Println("image base 64 format : %v", img)
 
 	imageKitURL, err := imagekits.ImageKit(context.Background(), img)
 	if err != nil {
@@ -224,7 +229,7 @@ func (h *barangHandler) UpdateBarang (c *gin.Context){
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *barangHandler) GetCategoryBarang (c *gin.Context){
+func (h *barangHandler) GetCategoryBarang(c *gin.Context) {
 	var input barang.GetCategory
 
 	err := c.ShouldBindUri(&input)
@@ -249,7 +254,7 @@ func (h *barangHandler) GetCategoryBarang (c *gin.Context){
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *barangHandler) DeleteBarang (c *gin.Context){
+func (h *barangHandler) DeleteBarang(c *gin.Context) {
 	var input barang.GetBarang
 
 	err := c.ShouldBindUri(&input)

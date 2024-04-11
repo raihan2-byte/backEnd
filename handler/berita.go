@@ -16,7 +16,7 @@ import (
 )
 
 type beritaHandler struct {
-	beritaService berita.Service
+	beritaService   berita.Service
 	endpointService endpointcount.StatisticsService
 }
 
@@ -24,7 +24,7 @@ func NewBeritaHandler(beritaService berita.Service, endpointService endpointcoun
 	return &beritaHandler{beritaService, endpointService}
 }
 
-func (h *beritaHandler) DeleteBerita(c *gin.Context){
+func (h *beritaHandler) DeleteBerita(c *gin.Context) {
 	var input berita.GetBerita
 
 	// var inputImages berita.GetBeritaImages
@@ -38,7 +38,7 @@ func (h *beritaHandler) DeleteBerita(c *gin.Context){
 		return
 	}
 
-	 err = h.beritaService.DeleteBerita(input.ID)
+	err = h.beritaService.DeleteBerita(input.ID)
 	if err != nil {
 		errors := helper.FormatValidationError(err)
 		errorMessage := gin.H{"errors": errors}
@@ -52,7 +52,7 @@ func (h *beritaHandler) DeleteBerita(c *gin.Context){
 
 }
 
-func (h *beritaHandler) GetOneBerita(c *gin.Context){
+func (h *beritaHandler) GetOneBerita(c *gin.Context) {
 	param := c.Param("slug")
 
 	newDel, err := h.beritaService.GetOneBerita(param)
@@ -64,19 +64,19 @@ func (h *beritaHandler) GetOneBerita(c *gin.Context){
 		return
 	}
 
-	err = h.endpointService.IncrementCount("View-Berita")
-    if err != nil {
-        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-    }
+	// err = h.endpointService.IncrementCount("View-Berita")
+	// if err != nil {
+	//     response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+	// 	c.JSON(http.StatusUnprocessableEntity, response)
+	// 	return
+	// }
 
 	response := helper.APIresponse(http.StatusOK, berita.FormatterBerita(newDel))
 	c.JSON(http.StatusOK, response)
 
 }
 
-func (h *beritaHandler) GetByTags (c *gin.Context){
+func (h *beritaHandler) GetByTags(c *gin.Context) {
 	var input berita.GetTags
 
 	err := c.ShouldBindUri(&input)
@@ -102,7 +102,7 @@ func (h *beritaHandler) GetByTags (c *gin.Context){
 
 }
 
-func (h *beritaHandler) GetByKarya(c *gin.Context){
+func (h *beritaHandler) GetByKarya(c *gin.Context) {
 	barang, err := h.beritaService.FindByKarya()
 	if err != nil {
 		errors := helper.FormatValidationError(err)
@@ -111,62 +111,62 @@ func (h *beritaHandler) GetByKarya(c *gin.Context){
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
 	}
-	
+
 	response := helper.APIresponse(http.StatusOK, berita.FormatterGetBerita(barang))
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *beritaHandler) CreateBerita(c *gin.Context){
+func (h *beritaHandler) CreateBerita(c *gin.Context) {
 	var imagesKitURLs []string
 
-    // Loop through all file input fields (e.g., "file1", "file2", etc.)
-    for i := 1; ; i++ {
-        fileKey := fmt.Sprintf("file%d", i)
-        file, err := c.FormFile(fileKey)
-        
-        // If there are no more files to upload, break the loop
-        if err == http.ErrMissingFile {
-            break
-        }
+	// Loop through all file input fields (e.g., "file1", "file2", etc.)
+	for i := 1; ; i++ {
+		fileKey := fmt.Sprintf("file%d", i)
+		file, err := c.FormFile(fileKey)
 
-        if err != nil {
-            fmt.Printf("Error when opening file %s: %v\n", fileKey, err)
-            continue // Skip to the next file
-        }
+		// If there are no more files to upload, break the loop
+		if err == http.ErrMissingFile {
+			break
+		}
 
-        src, err := file.Open()
-        if err != nil {
-            fmt.Printf("Error when opening file %s: %v\n", fileKey, err)
-            continue
-        }
-        defer src.Close()
+		if err != nil {
+			fmt.Printf("Error when opening file %s: %v\n", fileKey, err)
+			continue // Skip to the next file
+		}
 
-        buf := bytes.NewBuffer(nil)
-        if _, err := io.Copy(buf, src); err != nil {
-            fmt.Printf("Error reading file %s: %v\n", fileKey, err)
-            continue
-        }
+		src, err := file.Open()
+		if err != nil {
+			fmt.Printf("Error when opening file %s: %v\n", fileKey, err)
+			continue
+		}
+		defer src.Close()
 
-        img, err := imagekits.Base64toEncode(buf.Bytes())
-        if err != nil {
-            fmt.Printf("Error reading image %s: %v\n", fileKey, err)
-            continue
-        }
+		buf := bytes.NewBuffer(nil)
+		if _, err := io.Copy(buf, src); err != nil {
+			fmt.Printf("Error reading file %s: %v\n", fileKey, err)
+			continue
+		}
 
-        fmt.Printf("Image base64 format %s: %v\n", fileKey, img)
+		img, err := imagekits.Base64toEncode(buf.Bytes())
+		if err != nil {
+			fmt.Printf("Error reading image %s: %v\n", fileKey, err)
+			continue
+		}
 
-        imageKitURL, err := imagekits.ImageKit(context.Background(), img)
-        if err != nil {
-            fmt.Printf("Error uploading image %s to ImageKit: %v\n", fileKey, err)
-            continue
-        }
+		fmt.Printf("Image base64 format %s: %v\n", fileKey, img)
 
-        imagesKitURLs = append(imagesKitURLs, imageKitURL)
-    }
-		// if err != nil{
-		// 	return err
-		// }
-		var input berita.CreateBerita
+		imageKitURL, err := imagekits.ImageKit(context.Background(), img)
+		if err != nil {
+			fmt.Printf("Error uploading image %s to ImageKit: %v\n", fileKey, err)
+			continue
+		}
+
+		imagesKitURLs = append(imagesKitURLs, imageKitURL)
+	}
+	// if err != nil{
+	// 	return err
+	// }
+	var input berita.CreateBerita
 
 	err := c.ShouldBind(&input)
 
@@ -179,33 +179,33 @@ func (h *beritaHandler) CreateBerita(c *gin.Context){
 	}
 
 	// Create a new news item with the provided input
-newNews, err := h.beritaService.CreateBerita(input)
-fmt.Println(newNews)
-if err != nil {
-    response := helper.APIresponse(http.StatusUnprocessableEntity, err)
-    c.JSON(http.StatusUnprocessableEntity, response)
-    return
+	newNews, err := h.beritaService.CreateBerita(input)
+	fmt.Println(newNews)
+	if err != nil {
+		response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	// Associate the uploaded images with the news item
+	for _, imageURL := range imagesKitURLs {
+		// Create a new BeritaImage record for each image and associate it with the news item
+		err := h.beritaService.CreateBeritaImage(newNews.ID, imageURL)
+		if err != nil {
+			response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+			c.JSON(http.StatusUnprocessableEntity, response)
+			return
+		}
+	}
+
+	// Respond with a success message
+	data := gin.H{"is_uploaded": true}
+	response := helper.APIresponse(http.StatusOK, data)
+	c.JSON(http.StatusOK, response)
+
 }
 
-// Associate the uploaded images with the news item
-for _, imageURL := range imagesKitURLs {
-    // Create a new BeritaImage record for each image and associate it with the news item
-    err := h.beritaService.CreateBeritaImage(newNews.ID, imageURL)
-    if err != nil {
-        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
-        c.JSON(http.StatusUnprocessableEntity, response)
-        return
-    }
-}
-
-// Respond with a success message
-data := gin.H{"is_uploaded": true}
-response := helper.APIresponse(http.StatusOK, data)
-c.JSON(http.StatusOK, response)
-
-}
-
-func (h *beritaHandler) UpdateBerita (c *gin.Context){
+func (h *beritaHandler) UpdateBerita(c *gin.Context) {
 
 	var inputID berita.GetBerita
 	err := c.ShouldBindUri(&inputID)
@@ -249,7 +249,7 @@ func (h *beritaHandler) UpdateBerita (c *gin.Context){
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *beritaHandler) GetAllBerita(c *gin.Context){
+func (h *beritaHandler) GetAllBerita(c *gin.Context) {
 	input, _ := strconv.Atoi(c.Query("id"))
 
 	newBerita, err := h.beritaService.GetAllBerita(input)
@@ -259,12 +259,12 @@ func (h *beritaHandler) GetAllBerita(c *gin.Context){
 		return
 	}
 
-	err = h.endpointService.IncrementCount("View-All-News")
-    if err != nil {
-        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-    }
+	// err = h.endpointService.IncrementCount("View-All-News")
+	// if err != nil {
+	//     response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+	// 	c.JSON(http.StatusUnprocessableEntity, response)
+	// 	return
+	// }
 
 	response := helper.APIresponse(http.StatusOK, berita.FormatterGetBerita(newBerita))
 	c.JSON(http.StatusOK, response)

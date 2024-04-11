@@ -13,7 +13,6 @@ import (
 type homeHandler struct {
 	homeService     home.Service
 	endpointService endpointcount.StatisticsService
-	
 }
 
 func NewHomeHandler(homeService home.Service, endpointService endpointcount.StatisticsService) *homeHandler {
@@ -107,12 +106,12 @@ func (h *homeHandler) GetAllTagHome(c *gin.Context) {
 		return
 	}
 
-	err = h.endpointService.IncrementCount("View-Site")
-	if err != nil {
-		response := helper.APIresponse(http.StatusUnprocessableEntity, err)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-	}
+	// err = h.endpointService.IncrementCount("View-Site")
+	// if err != nil {
+	// 	response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+	// 	c.JSON(http.StatusUnprocessableEntity, response)
+	// 	return
+	// }
 
 	response := helper.APIresponse(http.StatusOK, newBerita)
 	c.JSON(http.StatusOK, response)

@@ -16,7 +16,7 @@ import (
 )
 
 type merchHandler struct {
-	merchService merch.Service
+	merchService    merch.Service
 	endpointService endpointcount.StatisticsService
 }
 
@@ -24,26 +24,31 @@ func NewMerchHandler(merchService merch.Service, endpointService endpointcount.S
 	return &merchHandler{merchService, endpointService}
 }
 
-func (h *merchHandler) CreateMerch (c *gin.Context){
+func (h *merchHandler) CreateMerch(c *gin.Context) {
 	file, _ := c.FormFile("file")
-	src,err:=file.Open()
-	defer	src.Close()
-	if err!=nil{
-		fmt.Printf("error when open file %v",err)
+	src, err := file.Open()
+	if err != nil {
+		response := helper.APIresponse(http.StatusInternalServerError, "Failed to open file")
+		c.JSON(http.StatusInternalServerError, response)
+		return
 	}
-	
-	buf:=bytes.NewBuffer(nil)
+	defer src.Close()
+	if err != nil {
+		fmt.Printf("error when open file %v", err)
+	}
+
+	buf := bytes.NewBuffer(nil)
 	if _, err := io.Copy(buf, src); err != nil {
-		fmt.Printf("error read file %v",err)
-		return 
-	}	
-
-	img,err:=imagekits.Base64toEncode(buf.Bytes())
-	if err!=nil{
-		fmt.Println("error reading image %v",err)
+		fmt.Printf("error read file %v", err)
+		return
 	}
 
-	fmt.Println("image base 64 format : %v",img)
+	img, err := imagekits.Base64toEncode(buf.Bytes())
+	if err != nil {
+		fmt.Println("error reading image %v", err)
+	}
+
+	fmt.Println("image base 64 format : %v", img)
 
 	imageKitURL, err := imagekits.ImageKit(context.Background(), img)
 	if err != nil {
@@ -99,12 +104,12 @@ func (h *merchHandler) GetAllMerch(c *gin.Context) {
 
 	// userAgent := c.GetHeader("User-Agent")
 
-	err = h.endpointService.IncrementCount("View-All-Merch")
-    if err != nil {
-        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-    }
+	// err = h.endpointService.IncrementCount("View-All-Merch")
+	// if err != nil {
+	//     response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+	// 	c.JSON(http.StatusUnprocessableEntity, response)
+	// 	return
+	// }
 
 	response := helper.APIresponse(http.StatusOK, newBerita)
 	c.JSON(http.StatusOK, response)
@@ -131,25 +136,24 @@ func (h *merchHandler) GetOneMerch(c *gin.Context) {
 		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
-		
+
 	}
 
 	// userAgent := c.GetHeader("User-Agent")
 
-	err = h.endpointService.IncrementCount("View-Merch")
-    if err != nil {
-        response := helper.APIresponse(http.StatusUnprocessableEntity, err)
-		c.JSON(http.StatusUnprocessableEntity, response)
-		return
-    }
+	// err = h.endpointService.IncrementCount("View-Merch")
+	// if err != nil {
+	//     response := helper.APIresponse(http.StatusUnprocessableEntity, err)
+	// 	c.JSON(http.StatusUnprocessableEntity, response)
+	// 	return
+	// }
 
 	response := helper.APIresponse(http.StatusOK, newDel)
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *merchHandler) DeleteMerch(c *gin.Context){
+func (h *merchHandler) DeleteMerch(c *gin.Context) {
 	var input merch.GetMerch
-
 
 	err := c.ShouldBindUri(&input)
 	if err != nil {
@@ -167,7 +171,7 @@ func (h *merchHandler) DeleteMerch(c *gin.Context){
 		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
-		
+
 	}
 	response := helper.APIresponse(http.StatusOK, newDel)
 	c.JSON(http.StatusOK, response)

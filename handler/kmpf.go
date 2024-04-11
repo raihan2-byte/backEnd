@@ -22,26 +22,31 @@ func NewKMPFHandler(kmpfService karyakmpf.Service) *kmpfHandler {
 	return &kmpfHandler{kmpfService}
 }
 
-func (h *kmpfHandler) CreateKMPF (c *gin.Context){
+func (h *kmpfHandler) CreateKMPF(c *gin.Context) {
 	file, _ := c.FormFile("file")
-	src,err:=file.Open()
-	defer	src.Close()
-	if err!=nil{
-		fmt.Printf("error when open file %v",err)
+	src, err := file.Open()
+	if err != nil {
+		response := helper.APIresponse(http.StatusInternalServerError, "Failed to open file")
+		c.JSON(http.StatusInternalServerError, response)
+		return
 	}
-	
-	buf:=bytes.NewBuffer(nil)
+	defer src.Close()
+	if err != nil {
+		fmt.Printf("error when open file %v", err)
+	}
+
+	buf := bytes.NewBuffer(nil)
 	if _, err := io.Copy(buf, src); err != nil {
-		fmt.Printf("error read file %v",err)
-		return 
-	}	
-
-	img,err:=imagekits.Base64toEncode(buf.Bytes())
-	if err!=nil{
-		fmt.Println("error reading image %v",err)
+		fmt.Printf("error read file %v", err)
+		return
 	}
 
-	fmt.Println("image base 64 format : %v",img)
+	img, err := imagekits.Base64toEncode(buf.Bytes())
+	if err != nil {
+		fmt.Println("error reading image %v", err)
+	}
+
+	fmt.Println("image base 64 format : %v", img)
 
 	imageKitURL, err := imagekits.ImageKit(context.Background(), img)
 	if err != nil {
@@ -119,15 +124,14 @@ func (h *kmpfHandler) GetOneKMPF(c *gin.Context) {
 		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
-		
+
 	}
 	response := helper.APIresponse(http.StatusOK, newDel)
 	c.JSON(http.StatusOK, response)
 }
 
-func (h *kmpfHandler) DeleteKMPF(c *gin.Context){
+func (h *kmpfHandler) DeleteKMPF(c *gin.Context) {
 	var input karyakmpf.GetKMPFID
-
 
 	err := c.ShouldBindUri(&input)
 	if err != nil {
@@ -145,7 +149,7 @@ func (h *kmpfHandler) DeleteKMPF(c *gin.Context){
 		response := helper.APIresponse(http.StatusUnprocessableEntity, errorMessage)
 		c.JSON(http.StatusUnprocessableEntity, response)
 		return
-		
+
 	}
 	response := helper.APIresponse(http.StatusOK, newDel)
 	c.JSON(http.StatusOK, response)
