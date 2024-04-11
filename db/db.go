@@ -43,9 +43,6 @@ func InitDb() (*gorm.DB, error) {
 	if err != nil {
 		log.Fatal("eror migration")
 	}
-	if err != nil {
-		return nil, err
-	}
 
 	return db, nil
 }

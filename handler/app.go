@@ -27,6 +27,13 @@ func StartApp() {
 		log.Fatal("Eror Db Connection", err)
 	}
 
+	router := gin.Default()
+	router.Use(cors.New(cors.Config{
+		AllowAllOrigins: true,
+		AllowHeaders:    []string{"Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Access-Control-Allow-Origin , Origin , Accept , X-Requested-With , Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization"},
+		AllowMethods:    []string{"POST, OPTIONS, GET, PUT, DELETE"},
+	}))
+
 	secretKey := os.Getenv("SECRET_KEY")
 
 	//auth
@@ -81,13 +88,6 @@ func StartApp() {
 	homeRepository := home.NewRepository(db)
 	homeService := home.NewService(homeRepository)
 	homeHandler := NewHomeHandler(homeService, statisticsService)
-
-	router := gin.Default()
-	router.Use(cors.New(cors.Config{
-		AllowAllOrigins: true,
-		AllowHeaders:    []string{"Access-Control-Allow-Headers", "Access-Control-Allow-Headers, Access-Control-Allow-Origin , Origin , Accept , X-Requested-With , Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers, Authorization"},
-		AllowMethods:    []string{"POST, OPTIONS, GET, PUT, DELETE"},
-	}))
 
 	//user
 	api := router.Group("/users")
