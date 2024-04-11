@@ -24,7 +24,7 @@ import (
 func StartApp() {
 	db, err := db.InitDb()
 	if err != nil {
-		log.Fatal("Eror Db Connection")
+		log.Fatal("Eror Db Connection", err)
 	}
 
 	secretKey := os.Getenv("SECRET_KEY")
