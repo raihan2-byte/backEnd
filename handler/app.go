@@ -34,9 +34,8 @@ func StartApp() {
 		AllowMethods:    []string{"POST, OPTIONS, GET, PUT, DELETE"},
 	}))
 
-	secretKey := os.Getenv("SECRET_KEY")
-
 	//auth
+	secretKey := os.Getenv("SECRET_KEY")
 	authService := auth.NewService()
 	authService.SetSecretKey(secretKey)
 	statisticsRepository := endpointcount.NewStatisticsRepository(db)
