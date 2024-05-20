@@ -31,7 +31,7 @@ func NewRepository(db *gorm.DB) *repository {
 
 func (r *repository) FindByLastID() (Berita, error) {
 	var berita Berita
-	err := r.db.Order("created_at desc").First(&berita).Error
+	err := r.db.Order("created_at desc").Preload("TagsData").Preload("KaryaNewsData").Preload("FileName").First(&berita).Error
 	if errors.Is(err, gorm.ErrRecordNotFound) {
 		return berita, errors.New("no berita found")
 	}
