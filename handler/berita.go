@@ -269,3 +269,16 @@ func (h *beritaHandler) GetAllBerita(c *gin.Context) {
 	response := helper.APIresponse(http.StatusOK, berita.FormatterGetBerita(newBerita))
 	c.JSON(http.StatusOK, response)
 }
+
+func (h *beritaHandler) GetLastBerita(c *gin.Context) {
+
+	newBerita, err := h.beritaService.GetLatestBerita()
+	if err != nil {
+		response := helper.APIresponse(http.StatusUnprocessableEntity, "Eror")
+		c.JSON(http.StatusUnprocessableEntity, response)
+		return
+	}
+
+	response := helper.APIresponse(http.StatusOK, berita.FormatterBerita(newBerita))
+	c.JSON(http.StatusOK, response)
+}

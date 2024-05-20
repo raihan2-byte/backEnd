@@ -9,9 +9,10 @@ import (
 type Repository interface {
 	//create User
 	Save(berita Berita) (Berita, error)
-	CreateImage(berita BeritaImage) (error)
+	CreateImage(berita BeritaImage) error
 	FindById(ID int) (Berita, error)
 	FindAll() ([]Berita, error)
+	FindByLastID() (Berita, error)
 	FindBySlug(slug string) (Berita, error)
 	FindByKarya(ID []int) ([]Berita, error)
 	FindByTags(tags int) ([]Berita, error)
@@ -28,6 +29,15 @@ func NewRepository(db *gorm.DB) *repository {
 	return &repository{db}
 }
 
+func (r *repository) FindByLastID() (Berita, error) {
+	var berita Berita
+	err := r.db.Order("created_at desc").First(&berita).Error
+	if errors.Is(err, gorm.ErrRecordNotFound) {
+		return berita, errors.New("no berita found")
+	}
+	return berita, err
+}
+
 func (r *repository) FindBySlug(slug string) (Berita, error) {
 	var ecopedia Berita
 
@@ -37,14 +47,14 @@ func (r *repository) FindBySlug(slug string) (Berita, error) {
 		return ecopedia, err
 	}
 	if ecopedia.Slug == "" {
-        return ecopedia, errors.New("slug not found")
-    }
-	
+		return ecopedia, errors.New("slug not found")
+	}
+
 	return ecopedia, nil
 
 }
 
-func (r *repository) FindAll()([]Berita, error){
+func (r *repository) FindAll() ([]Berita, error) {
 	var berita []Berita
 
 	err := r.db.Order("id DESC").Preload("TagsData").Preload("KaryaNewsData").Preload("FileName").Find(&berita).Error
@@ -63,12 +73,11 @@ func (r *repository) Save(berita Berita) (Berita, error) {
 	return berita, nil
 }
 
-func (r *repository) CreateImage(berita BeritaImage) (error) {
+func (r *repository) CreateImage(berita BeritaImage) error {
 	err := r.db.Create(&berita).Error
-		return  err
-	
-}
+	return err
 
+}
 
 func (r *repository) FindByTags(tags int) ([]Berita, error) {
 	var berita []Berita
@@ -90,7 +99,6 @@ func (r *repository) FindByKarya(ID []int) ([]Berita, error) {
 	}
 	return berita, nil
 }
-
 
 func (r *repository) FindById(ID int) (Berita, error) {
 	var berita Berita
@@ -123,10 +131,10 @@ func (r *repository) Delete(berita Berita) (Berita, error) {
 }
 
 func (r *repository) DeleteImages(beritaID int) error {
-    err := r.db.Where("berita_id = ?", beritaID).Delete(&BeritaImage{}).Error
-    if err != nil {
-        return err
-    }
+	err := r.db.Where("berita_id = ?", beritaID).Delete(&BeritaImage{}).Error
+	if err != nil {
+		return err
+	}
 
-    return nil
+	return nil
 }

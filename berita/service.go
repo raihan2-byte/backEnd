@@ -10,6 +10,7 @@ import (
 )
 
 type Service interface {
+	GetLatestBerita() (Berita, error)
 	CreateBerita(input CreateBerita) (Berita, error)
 	GetAllBerita(input int) ([]Berita, error)
 	DeleteBerita(ID int) error
@@ -26,6 +27,10 @@ type service struct {
 
 func NewService(repository Repository) *service {
 	return &service{repository}
+}
+
+func (s *service) GetLatestBerita() (Berita, error) {
+	return s.repository.FindByLastID()
 }
 
 func (s *service) CreateBeritaImage(beritaID int, FileName string) error {

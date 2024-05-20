@@ -105,6 +105,7 @@ func StartApp() {
 	apiBerita.GET("/:slug", beritaHandler.GetOneBerita)
 	apiBerita.GET("/tags/:id", beritaHandler.GetByTags)
 	apiBerita.GET("/karya", beritaHandler.GetByKarya)
+	apiBerita.GET("/", beritaHandler.GetLastBerita)
 
 	//barang
 	apiBarang := router.Group("/barang")
